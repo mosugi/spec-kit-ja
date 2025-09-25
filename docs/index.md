@@ -1,62 +1,62 @@
 # Spec Kit
 
-*Build high-quality software faster.*
+*高品質なソフトウェアをより速く構築。*
 
-**An effort to allow organizations to focus on product scenarios rather than writing undifferentiated code with the help of Spec-Driven Development.**
+**Spec-Driven Development の力を借りて、組織が差別化されていないコードの作成ではなく、プロダクトシナリオに集中できるようにする取り組み。**
 
-## What is Spec-Driven Development?
+## Spec-Driven Development とは？
 
-Spec-Driven Development **flips the script** on traditional software development. For decades, code has been king — specifications were just scaffolding we built and discarded once the "real work" of coding began. Spec-Driven Development changes this: **specifications become executable**, directly generating working implementations rather than just guiding them.
+Spec-Driven Development は従来のソフトウェア開発の**常識を覆します**。何十年もの間、コードが王様でした。仕様書は、コーディングという「本当の仕事」が始まると構築し、その後破棄される足場にすぎませんでした。Spec-Driven Development はこれを変えます：**仕様書が実行可能になり**、単にガイドするだけでなく、動作する実装を直接生成します。
 
-## Getting Started
+## はじめに
 
-- [Installation Guide](installation.md)
-- [Quick Start Guide](quickstart.md)
-- [Local Development](local-development.md)
+- [インストールガイド](installation.md)
+- [クイックスタートガイド](quickstart.md)
+- [ローカル開発](local-development.md)
 
-## Core Philosophy
+## 基本理念
 
-Spec-Driven Development is a structured process that emphasizes:
+Spec-Driven Development は以下を重視する構造化されたプロセスです：
 
-- **Intent-driven development** where specifications define the "_what_" before the "_how_"
-- **Rich specification creation** using guardrails and organizational principles
-- **Multi-step refinement** rather than one-shot code generation from prompts
-- **Heavy reliance** on advanced AI model capabilities for specification interpretation
+- **意図駆動開発** - 仕様書が「_どうやって_」よりも先に「_何を_」を定義する
+- **豊富な仕様作成** - ガードレールと組織原則を使用
+- **多段階の改良** - プロンプトからの一発コード生成ではない
+- **高い依存度** - 仕様解釈のための高度なAIモデル機能への依存
 
-## Development Phases
+## 開発フェーズ
 
-| Phase | Focus | Key Activities |
+| フェーズ | 焦点 | 主な活動 |
 |-------|-------|----------------|
-| **0-to-1 Development** ("Greenfield") | Generate from scratch | <ul><li>Start with high-level requirements</li><li>Generate specifications</li><li>Plan implementation steps</li><li>Build production-ready applications</li></ul> |
-| **Creative Exploration** | Parallel implementations | <ul><li>Explore diverse solutions</li><li>Support multiple technology stacks & architectures</li><li>Experiment with UX patterns</li></ul> |
-| **Iterative Enhancement** ("Brownfield") | Brownfield modernization | <ul><li>Add features iteratively</li><li>Modernize legacy systems</li><li>Adapt processes</li></ul> |
+| **0-to-1 開発** ("Greenfield") | ゼロから生成 | <ul><li>高レベル要件から開始</li><li>仕様書を生成</li><li>実装手順を計画</li><li>本番対応アプリケーションを構築</li></ul> |
+| **創造的探索** | 並行実装 | <ul><li>多様なソリューションを探索</li><li>複数の技術スタックとアーキテクチャをサポート</li><li>UXパターンを実験</li></ul> |
+| **反復的改善** ("Brownfield") | Brownfield 近代化 | <ul><li>機能を反復的に追加</li><li>レガシーシステムを近代化</li><li>プロセスを適応</li></ul> |
 
-## Experimental Goals
+## 実験目標
 
-Our research and experimentation focus on:
+私たちの研究と実験は以下に焦点を当てています：
 
-### Technology Independence
-- Create applications using diverse technology stacks
-- Validate the hypothesis that Spec-Driven Development is a process not tied to specific technologies, programming languages, or frameworks
+### 技術非依存性
+- 多様な技術スタックを使用してアプリケーションを作成
+- Spec-Driven Development が特定の技術、プログラミング言語、フレームワークに依存しないプロセスであるという仮説を検証
 
-### Enterprise Constraints
-- Demonstrate mission-critical application development
-- Incorporate organizational constraints (cloud providers, tech stacks, engineering practices)
-- Support enterprise design systems and compliance requirements
+### エンタープライズ制約
+- ミッションクリティカルなアプリケーション開発を実証
+- 組織制約（クラウドプロバイダー、技術スタック、エンジニアリング慣行）を組み込む
+- エンタープライズデザインシステムとコンプライアンス要件をサポート
 
-### User-Centric Development
-- Build applications for different user cohorts and preferences
-- Support various development approaches (from vibe-coding to AI-native development)
+### ユーザー中心開発
+- 異なるユーザーコホートと好みのためのアプリケーションを構築
+- さまざまな開発アプローチをサポート（vibe-coding から AI ネイティブ開発まで）
 
-### Creative & Iterative Processes
-- Validate the concept of parallel implementation exploration
-- Provide robust iterative feature development workflows
-- Extend processes to handle upgrades and modernization tasks
+### 創造的・反復的プロセス
+- 並行実装探索のコンセプトを検証
+- 堅牢な反復的機能開発ワークフローを提供
+- アップグレードと近代化タスクを処理するプロセスを拡張
 
-## Contributing
+## 貢献
 
-Please see our [Contributing Guide](CONTRIBUTING.md) for information on how to contribute to this project.
+このプロジェクトへの貢献方法については、[貢献ガイド](CONTRIBUTING.md) をご覧ください。
 
-## Support
+## サポート
 
-For support, please check our [Support Guide](SUPPORT.md) or open an issue on GitHub.
+サポートについては、[サポートガイド](SUPPORT.md) をご確認いただくか、GitHub で issue を作成してください。

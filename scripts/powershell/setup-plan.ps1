@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Setup implementation plan for a feature
+# フィーチャーの実装プランをセットアップ
 
 [CmdletBinding()]
 param(
@@ -9,7 +9,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# Show help if requested
+# ヘルプが要求された場合は表示
 if ($Help) {
     Write-Output "Usage: ./setup-plan.ps1 [-Json] [-Help]"
     Write-Output "  -Json     Output results in JSON format"
@@ -17,32 +17,32 @@ if ($Help) {
     exit 0
 }
 
-# Load common functions
+# 共通関数を読み込み
 . "$PSScriptRoot/common.ps1"
 
-# Get all paths and variables from common functions
+# 共通関数からすべてのパスと変数を取得
 $paths = Get-FeaturePathsEnv
 
-# Check if we're on a proper feature branch (only for git repos)
+# 適切なフィーチャーブランチにいるかチェック（gitリポジトリのみ）
 if (-not (Test-FeatureBranch -Branch $paths.CURRENT_BRANCH -HasGit $paths.HAS_GIT)) { 
     exit 1 
 }
 
-# Ensure the feature directory exists
+# フィーチャーディレクトリの存在を確認
 New-Item -ItemType Directory -Path $paths.FEATURE_DIR -Force | Out-Null
 
-# Copy plan template if it exists, otherwise note it or create empty file
+# プランテンプレートが存在する場合はコピー、さもないとメモして空ファイルを作成
 $template = Join-Path $paths.REPO_ROOT '.specify/templates/plan-template.md'
 if (Test-Path $template) { 
     Copy-Item $template $paths.IMPL_PLAN -Force
     Write-Output "Copied plan template to $($paths.IMPL_PLAN)"
 } else {
     Write-Warning "Plan template not found at $template"
-    # Create a basic plan file if template doesn't exist
+    # テンプレートが存在しない場合は基本的なプランファイルを作成
     New-Item -ItemType File -Path $paths.IMPL_PLAN -Force | Out-Null
 }
 
-# Output results
+# 結果を出力
 if ($Json) {
     $result = [PSCustomObject]@{ 
         FEATURE_SPEC = $paths.FEATURE_SPEC

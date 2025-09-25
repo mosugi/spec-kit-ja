@@ -1,51 +1,51 @@
 # AGENTS.md
 
-## About Spec Kit and Specify
+## Spec KitとSpecifyについて
 
-**GitHub Spec Kit** is a comprehensive toolkit for implementing Spec-Driven Development (SDD) - a methodology that emphasizes creating clear specifications before implementation. The toolkit includes templates, scripts, and workflows that guide development teams through a structured approach to building software.
+**GitHub Spec Kit**は、仕様駆動開発（SDD）を実装するための包括的なツールキットです。これは実装前に明確な仕様を作成することを重視する手法です。このツールキットには、開発チームを構造化されたソフトウェア構築アプローチに導くテンプレート、スクリプト、ワークフローが含まれています。
 
-**Specify CLI** is the command-line interface that bootstraps projects with the Spec Kit framework. It sets up the necessary directory structures, templates, and AI agent integrations to support the Spec-Driven Development workflow.
+**Specify CLI**は、Spec Kitフレームワークでプロジェクトをブートストラップするコマンドラインインターフェイスです。仕様駆動開発ワークフローをサポートするために必要なディレクトリ構造、テンプレート、AIエージェント統合を設定します。
 
-The toolkit supports multiple AI coding assistants, allowing teams to use their preferred tools while maintaining consistent project structure and development practices.
+このツールキットは複数のAIコーディングアシスタントをサポートし、チームが一貫したプロジェクト構造と開発プラクティスを維持しながら、お好みのツールを使用できるようにします。
 
 ---
 
-## General practices
+## 一般的なプラクティス
 
-- Any changes to `__init__.py` for the Specify CLI require a version rev in `pyproject.toml` and addition of entries to `CHANGELOG.md`.
+- Specify CLIの`__init__.py`へのいかなる変更も、`pyproject.toml`でのバージョンアップと`CHANGELOG.md`へのエントリ追加が必要です。
 
-## Adding New Agent Support
+## 新しいエージェントサポートの追加
 
-This section explains how to add support for new AI agents/assistants to the Specify CLI. Use this guide as a reference when integrating new AI tools into the Spec-Driven Development workflow.
+このセクションでは、Specify CLIに新しいAIエージェント/アシスタントのサポートを追加する方法を説明します。新しいAIツールを仕様駆動開発ワークフローに統合する際の参考としてこのガイドを使用してください。
 
-### Overview
+### 概要
 
-Specify supports multiple AI agents by generating agent-specific command files and directory structures when initializing projects. Each agent has its own conventions for:
+Specifyは、プロジェクト初期化時にエージェント固有のコマンドファイルとディレクトリ構造を生成することで、複数のAIエージェントをサポートします。各エージェントは以下に関して独自の規約を持ちます：
 
-- **Command file formats** (Markdown, TOML, etc.)
-- **Directory structures** (`.claude/commands/`, `.windsurf/workflows/`, etc.)
-- **Command invocation patterns** (slash commands, CLI tools, etc.)
-- **Argument passing conventions** (`$ARGUMENTS`, `{{args}}`, etc.)
+- **コマンドファイル形式**（Markdown、TOMLなど）
+- **ディレクトリ構造**（`.claude/commands/`、`.windsurf/workflows/`など）
+- **コマンド呼び出しパターン**（スラッシュコマンド、CLIツールなど）
+- **引数渡し規約**（`$ARGUMENTS`、`{{args}}`など）
 
-### Current Supported Agents
+### 現在サポートされているエージェント
 
-| Agent | Directory | Format | CLI Tool | Description |
+| エージェント | ディレクトリ | 形式 | CLIツール | 説明 |
 |-------|-----------|---------|----------|-------------|
-| **Claude Code** | `.claude/commands/` | Markdown | `claude` | Anthropic's Claude Code CLI |
-| **Gemini CLI** | `.gemini/commands/` | TOML | `gemini` | Google's Gemini CLI |
-| **GitHub Copilot** | `.github/prompts/` | Markdown | N/A (IDE-based) | GitHub Copilot in VS Code |
+| **Claude Code** | `.claude/commands/` | Markdown | `claude` | AnthropicのClaude Code CLI |
+| **Gemini CLI** | `.gemini/commands/` | TOML | `gemini` | GoogleのGemini CLI |
+| **GitHub Copilot** | `.github/prompts/` | Markdown | N/A (IDEベース) | VS CodeのGitHub Copilot |
 | **Cursor** | `.cursor/commands/` | Markdown | `cursor-agent` | Cursor CLI |
-| **Qwen Code** | `.qwen/commands/` | TOML | `qwen` | Alibaba's Qwen Code CLI |
+| **Qwen Code** | `.qwen/commands/` | TOML | `qwen` | AlibabaのQwen Code CLI |
 | **opencode** | `.opencode/command/` | Markdown | `opencode` | opencode CLI |
-| **Windsurf** | `.windsurf/workflows/` | Markdown | N/A (IDE-based) | Windsurf IDE workflows |
+| **Windsurf** | `.windsurf/workflows/` | Markdown | N/A (IDEベース) | Windsurf IDEワークフロー |
 
-### Step-by-Step Integration Guide
+### ステップバイステップ統合ガイド
 
-Follow these steps to add a new agent (using Windsurf as an example):
+新しいエージェントを追加するために以下のステップに従ってください（Windsurfを例として）：
 
-#### 1. Update AI_CHOICES Constant
+#### 1. AI_CHOICES定数の更新
 
-Add the new agent to the `AI_CHOICES` dictionary in `src/specify_cli/__init__.py`:
+`src/specify_cli/__init__.py`の`AI_CHOICES`辞書に新しいエージェントを追加します：
 
 ```python
 AI_CHOICES = {
@@ -59,7 +59,7 @@ AI_CHOICES = {
 }
 ```
 
-Also update the `agent_folder_map` in the same file to include the new agent's folder for the security notice:
+同じファイル内の`agent_folder_map`も更新して、セキュリティ通知のために新しいエージェントのフォルダを含めてください：
 
 ```python
 agent_folder_map = {
@@ -76,22 +76,22 @@ agent_folder_map = {
 }
 ```
 
-#### 2. Update CLI Help Text
+#### 2. CLIヘルプテキストの更新
 
-Update all help text and examples to include the new agent:
+新しいエージェントを含むように、すべてのヘルプテキストと例を更新します：
 
-- Command option help: `--ai` parameter description
-- Function docstrings and examples
-- Error messages with agent lists
+- コマンドオプションヘルプ：`--ai`パラメータの説明
+- 関数のdocstringと例
+- エージェントリスト付きのエラーメッセージ
 
-#### 3. Update README Documentation
+#### 3. README文書の更新
 
-Update the **Supported AI Agents** section in `README.md` to include the new agent:
+`README.md`の**サポートされたAIエージェント**セクションを更新して新しいエージェントを含めます：
 
-- Add the new agent to the table with appropriate support level (Full/Partial)
-- Include the agent's official website link
-- Add any relevant notes about the agent's implementation
-- Ensure the table formatting remains aligned and consistent
+- 適切なサポートレベル（Full/Partial）で新しいエージェントをテーブルに追加
+- エージェントの公式ウェブサイトリンクを含める
+- エージェントの実装に関する関連メモを追加
+- テーブルの書式が整列され、一貫していることを確認
 
 #### 4. Update Release Package Script
 
@@ -188,84 +188,84 @@ elif selected_ai == "windsurf":
 
 **Note**: Skip CLI checks for IDE-based agents (Copilot, Windsurf).
 
-## Agent Categories
+## エージェントカテゴリ
 
-### CLI-Based Agents
-Require a command-line tool to be installed:
+### CLIベースエージェント
+コマンドラインツールのインストールが必要：
 - **Claude Code**: `claude` CLI
-- **Gemini CLI**: `gemini` CLI  
+- **Gemini CLI**: `gemini` CLI
 - **Cursor**: `cursor-agent` CLI
 - **Qwen Code**: `qwen` CLI
 - **opencode**: `opencode` CLI
 
-### IDE-Based Agents
-Work within integrated development environments:
-- **GitHub Copilot**: Built into VS Code/compatible editors
-- **Windsurf**: Built into Windsurf IDE
+### IDEベースエージェント
+統合開発環境内で動作：
+- **GitHub Copilot**: VS Code/互換エディタに組み込み
+- **Windsurf**: Windsurf IDEに組み込み
 
-## Command File Formats
+## コマンドファイル形式
 
-### Markdown Format
-Used by: Claude, Cursor, opencode, Windsurf
+### Markdown形式
+使用者：Claude、Cursor、opencode、Windsurf
 
 ```markdown
 ---
-description: "Command description"
+description: "コマンドの説明"
 ---
 
-Command content with {SCRIPT} and $ARGUMENTS placeholders.
+{SCRIPT}と$ARGUMENTSプレースホルダ付きのコマンド内容。
 ```
 
-### TOML Format
-Used by: Gemini, Qwen
+### TOML形式
+使用者：Gemini、Qwen
 
 ```toml
-description = "Command description"
+description = "コマンドの説明"
 
 prompt = """
-Command content with {SCRIPT} and {{args}} placeholders.
+{SCRIPT}と{{args}}プレースホルダ付きのコマンド内容。
 """
 ```
 
-## Directory Conventions
+## ディレクトリ規約
 
-- **CLI agents**: Usually `.<agent-name>/commands/`
-- **IDE agents**: Follow IDE-specific patterns:
+- **CLIエージェント**: 通常`.<agent-name>/commands/`
+- **IDEエージェント**: IDE固有のパターンに従う：
   - Copilot: `.github/prompts/`
   - Cursor: `.cursor/commands/`
   - Windsurf: `.windsurf/workflows/`
 
-## Argument Patterns
+## 引数パターン
 
-Different agents use different argument placeholders:
-- **Markdown/prompt-based**: `$ARGUMENTS`
-- **TOML-based**: `{{args}}`
-- **Script placeholders**: `{SCRIPT}` (replaced with actual script path)
-- **Agent placeholders**: `__AGENT__` (replaced with agent name)
+異なるエージェントは異なる引数プレースホルダを使用します：
+- **Markdown/プロンプトベース**: `$ARGUMENTS`
+- **TOMLベース**: `{{args}}`
+- **スクリプトプレースホルダ**: `{SCRIPT}`（実際のスクリプトパスで置換）
+- **エージェントプレースホルダ**: `__AGENT__`（エージェント名で置換）
 
-## Testing New Agent Integration
+## 新しいエージェント統合のテスト
 
-1. **Build test**: Run package creation script locally
-2. **CLI test**: Test `specify init --ai <agent>` command
-3. **File generation**: Verify correct directory structure and files
-4. **Command validation**: Ensure generated commands work with the agent
-5. **Context update**: Test agent context update scripts
+1. **ビルドテスト**: パッケージ作成スクリプトをローカルで実行
+2. **CLIテスト**: `specify init --ai <agent>` コマンドをテスト
+3. **ファイル生成**: 正しいディレクトリ構造とファイルを検証
+4. **コマンド検証**: 生成されたコマンドがエージェントで動作することを確認
+5. **コンテキスト更新**: エージェントコンテキスト更新スクリプトをテスト
 
-## Common Pitfalls
+## よくある落とし穴
 
-1. **Forgetting update scripts**: Both bash and PowerShell scripts must be updated
-2. **Missing CLI checks**: Only add for agents that actually have CLI tools
-3. **Wrong argument format**: Use correct placeholder format for each agent type
-4. **Directory naming**: Follow agent-specific conventions exactly
-5. **Help text inconsistency**: Update all user-facing text consistently
+1. **更新スクリプトの忘れ**: bashとPowerShellスクリプトの両方を更新する必要があります
+2. **CLIチェックの漏れ**: 実際にCLIツールを持つエージェントのみ追加
+3. **間違った引数形式**: 各エージェントタイプに正しいプレースホルダ形式を使用
+4. **ディレクトリ名**: エージェント固有の規約に正確に従う
+5. **ヘルプテキストの非一貫性**: すべてのユーザー向けテキストを一貫して更新
 
-## Future Considerations
+## 将来の検討事項
 
-When adding new agents:
-- Consider the agent's native command/workflow patterns
-- Ensure compatibility with the Spec-Driven Development process
-- Document any special requirements or limitations
-- Update this guide with lessons learned
+新しいエージェントを追加する際は：
+- エージェントのネイティブコマンド/ワークフローパターンを考慮
+- 仕様駆動開発プロセスとの互換性を確保
+- 特別な要件や制限を文書化
+- 学んだ教訓でこのガイドを更新
 
 ---
 

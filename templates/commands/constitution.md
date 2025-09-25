@@ -1,73 +1,73 @@
 ---
-description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync.
+description: 対話的に入力された原則または提供された原則の入力からプロジェクト憲章を作成または更新し、すべての依存テンプレートが同期を保つようにします。
 ---
 
-The user input to you can be provided directly by the agent or as a command argument - you **MUST** consider it before proceeding with the prompt (if not empty).
+ユーザーからの入力は、エージェントから直接またはコマンド引数として提供される場合があります。プロンプトを実行する前に、その内容を**必ず**考慮してください（空でない場合）。
 
-User input:
+ユーザー入力:
 
 $ARGUMENTS
 
-You are updating the project constitution at `/memory/constitution.md`. This file is a TEMPLATE containing placeholder tokens in square brackets (e.g. `[PROJECT_NAME]`, `[PRINCIPLE_1_NAME]`). Your job is to (a) collect/derive concrete values, (b) fill the template precisely, and (c) propagate any amendments across dependent artifacts.
+あなたは `/memory/constitution.md` にあるプロジェクト憲章を更新しています。このファイルは角括弧内にプレースホルダートークン（例：`[PROJECT_NAME]`、`[PRINCIPLE_1_NAME]`）を含むテンプレートです。あなたの仕事は、(a) 具体的な値を収集/導出し、(b) テンプレートを正確に埋め、(c) 依存成果物全体に修正を反映することです。
 
-Follow this execution flow:
+以下の実行フローに従ってください：
 
-1. Load the existing constitution template at `/memory/constitution.md`.
-   - Identify every placeholder token of the form `[ALL_CAPS_IDENTIFIER]`.
-   **IMPORTANT**: The user might require less or more principles than the ones used in the template. If a number is specified, respect that - follow the general template. You will update the doc accordingly.
+1. `/memory/constitution.md` にある既存の憲章テンプレートを読み込む。
+   - `[ALL_CAPS_IDENTIFIER]` 形式のすべてのプレースホルダートークンを特定する。
+   **重要**: ユーザーはテンプレートで使用されているよりも少ない、または多い原則を必要とする場合があります。数が指定されている場合は、それを尊重し、一般的なテンプレートに従ってください。それに応じて文書を更新します。
 
-2. Collect/derive values for placeholders:
-   - If user input (conversation) supplies a value, use it.
-   - Otherwise infer from existing repo context (README, docs, prior constitution versions if embedded).
-   - For governance dates: `RATIFICATION_DATE` is the original adoption date (if unknown ask or mark TODO), `LAST_AMENDED_DATE` is today if changes are made, otherwise keep previous.
-   - `CONSTITUTION_VERSION` must increment according to semantic versioning rules:
-     * MAJOR: Backward incompatible governance/principle removals or redefinitions.
-     * MINOR: New principle/section added or materially expanded guidance.
-     * PATCH: Clarifications, wording, typo fixes, non-semantic refinements.
-   - If version bump type ambiguous, propose reasoning before finalizing.
+2. プレースホルダーの値を収集/導出する：
+   - ユーザー入力（会話）で値が提供されている場合は、それを使用する。
+   - そうでなければ、既存のリポジトリコンテキスト（README、ドキュメント、以前の憲章バージョンが埋め込まれている場合）から推測する。
+   - ガバナンス日付について：`RATIFICATION_DATE` は元の採択日（不明な場合は尋ねるかTODOとしてマーク）、`LAST_AMENDED_DATE` は変更が行われた場合は今日、そうでなければ以前の日付を維持。
+   - `CONSTITUTION_VERSION` はセマンティックバージョニング規則に従ってインクリメントする必要があります：
+     * MAJOR: 後方互換性のないガバナンス/原則の削除または再定義。
+     * MINOR: 新しい原則/セクションの追加または実質的に拡張されたガイダンス。
+     * PATCH: 明確化、表現、誤字修正、非セマンティックな改善。
+   - バージョンバンプタイプが曖昧な場合は、確定前に理由を提案する。
 
-3. Draft the updated constitution content:
-   - Replace every placeholder with concrete text (no bracketed tokens left except intentionally retained template slots that the project has chosen not to define yet—explicitly justify any left).
-   - Preserve heading hierarchy and comments can be removed once replaced unless they still add clarifying guidance.
-   - Ensure each Principle section: succinct name line, paragraph (or bullet list) capturing non‑negotiable rules, explicit rationale if not obvious.
-   - Ensure Governance section lists amendment procedure, versioning policy, and compliance review expectations.
+3. 更新された憲章内容を起草する：
+   - すべてのプレースホルダーを具体的なテキストに置き換える（プロジェクトがまだ定義しないことを選択したテンプレートスロットを意図的に保持している場合を除き、角括弧トークンを残さない—残されたものについては明確に正当化する）。
+   - 見出し階層を保持し、置き換え後はコメントを削除できますが、まだ明確化のガイダンスを追加している場合は除く。
+   - 各原則セクションを確保：簡潔な名前行、非交渉可能なルールを捉える段落（または箇条書き）、明白でない場合は明確な理由付け。
+   - ガバナンスセクションが修正手順、バージョン管理ポリシー、コンプライアンスレビューの期待を列挙することを確保。
 
-4. Consistency propagation checklist (convert prior checklist into active validations):
-   - Read `/templates/plan-template.md` and ensure any "Constitution Check" or rules align with updated principles.
-   - Read `/templates/spec-template.md` for scope/requirements alignment—update if constitution adds/removes mandatory sections or constraints.
-   - Read `/templates/tasks-template.md` and ensure task categorization reflects new or removed principle-driven task types (e.g., observability, versioning, testing discipline).
-   - Read each command file in `/templates/commands/*.md` (including this one) to verify no outdated references (agent-specific names like CLAUDE only) remain when generic guidance is required.
-   - Read any runtime guidance docs (e.g., `README.md`, `docs/quickstart.md`, or agent-specific guidance files if present). Update references to principles changed.
+4. 一貫性伝播チェックリスト（以前のチェックリストをアクティブな検証に変換）：
+   - `/templates/plan-template.md` を読み、「憲章チェック」またはルールが更新された原則と整合していることを確保する。
+   - `/templates/spec-template.md` を範囲/要件の整合性について読む—憲章が必須セクションや制約を追加/削除した場合は更新する。
+   - `/templates/tasks-template.md` を読み、タスク分類が新しいまたは削除された原則駆動のタスクタイプ（例：観測可能性、バージョン管理、テスト規律）を反映することを確保する。
+   - `/templates/commands/*.md` の各コマンドファイル（このファイルを含む）を読み、一般的なガイダンスが必要な場合に、古い参照（CLAUDEのようなエージェント固有の名前のみ）が残っていないことを確認する。
+   - 任意のランタイムガイダンス文書（例：`README.md`、`docs/quickstart.md`、またはエージェント固有のガイダンスファイルが存在する場合）を読む。変更された原則への参照を更新する。
 
-5. Produce a Sync Impact Report (prepend as an HTML comment at top of the constitution file after update):
-   - Version change: old → new
-   - List of modified principles (old title → new title if renamed)
-   - Added sections
-   - Removed sections
-   - Templates requiring updates (✅ updated / ⚠ pending) with file paths
-   - Follow-up TODOs if any placeholders intentionally deferred.
+5. 同期影響レポートを作成（更新後の憲章ファイルの先頭にHTMLコメントとして追加）：
+   - バージョン変更：旧 → 新
+   - 修正された原則のリスト（名前が変更された場合は 旧タイトル → 新タイトル）
+   - 追加されたセクション
+   - 削除されたセクション
+   - 更新が必要なテンプレート（✅ 更新済み / ⚠ 保留中）とファイルパス
+   - プレースホルダーが意図的に延期された場合のフォローアップTODO。
 
-6. Validation before final output:
-   - No remaining unexplained bracket tokens.
-   - Version line matches report.
-   - Dates ISO format YYYY-MM-DD.
-   - Principles are declarative, testable, and free of vague language ("should" → replace with MUST/SHOULD rationale where appropriate).
+6. 最終出力前の検証：
+   - 説明されていない角括弧トークンが残っていない。
+   - バージョン行がレポートと一致している。
+   - 日付がISO形式 YYYY-MM-DD。
+   - 原則が宣言的で、テスト可能で、曖昧な言語がない（「should」 → 適切な場合はMUST/SHOULDの理由付けで置き換える）。
 
-7. Write the completed constitution back to `/memory/constitution.md` (overwrite).
+7. 完成した憲章を `/memory/constitution.md` に書き戻す（上書き）。
 
-8. Output a final summary to the user with:
-   - New version and bump rationale.
-   - Any files flagged for manual follow-up.
-   - Suggested commit message (e.g., `docs: amend constitution to vX.Y.Z (principle additions + governance update)`).
+8. ユーザーに最終サマリーを出力：
+   - 新しいバージョンとバンプの理由付け。
+   - 手動フォローアップのためにフラグされたファイル。
+   - 推奨コミットメッセージ（例：`docs: amend constitution to vX.Y.Z (principle additions + governance update)`）。
 
-Formatting & Style Requirements:
-- Use Markdown headings exactly as in the template (do not demote/promote levels).
-- Wrap long rationale lines to keep readability (<100 chars ideally) but do not hard enforce with awkward breaks.
-- Keep a single blank line between sections.
-- Avoid trailing whitespace.
+書式とスタイル要件：
+- テンプレートと同じMarkdown見出しを使用する（レベルを下げたり上げたりしない）。
+- 読みやすさを保つために長い理由付け行を折り返す（理想的には100文字未満）が、不自然な改行で厳密に適用しない。
+- セクション間に単一の空行を保つ。
+- 末尾の空白を避ける。
 
-If the user supplies partial updates (e.g., only one principle revision), still perform validation and version decision steps.
+ユーザーが部分的な更新（例：一つの原則の修正のみ）を提供した場合でも、検証とバージョン決定ステップを実行してください。
 
-If critical info missing (e.g., ratification date truly unknown), insert `TODO(<FIELD_NAME>): explanation` and include in the Sync Impact Report under deferred items.
+重要な情報が欠落している場合（例：批准日が本当に不明）、`TODO(<FIELD_NAME>): explanation` を挿入し、延期項目の下で同期影響レポートに含めてください。
 
-Do not create a new template; always operate on the existing `/memory/constitution.md` file.
+新しいテンプレートを作成しないでください；常に既存の `/memory/constitution.md` ファイルで操作してください。

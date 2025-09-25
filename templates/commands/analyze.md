@@ -1,104 +1,104 @@
 ---
-description: Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, and tasks.md after task generation.
+description: タスク生成後にspec.md、plan.md、tasks.mdの3つのコア成果物間で非破壊的な一貫性と品質分析を実行します。
 scripts:
   sh: scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
   ps: scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
 ---
 
-The user input to you can be provided directly by the agent or as a command argument - you **MUST** consider it before proceeding with the prompt (if not empty).
+ユーザーの入力は、エージェントから直接提供される場合もコマンド引数として提供される場合もあります。プロンプトを進める前に**必ず**それを考慮してください（空でない場合）。
 
-User input:
+ユーザー入力：
 
 $ARGUMENTS
 
-Goal: Identify inconsistencies, duplications, ambiguities, and underspecified items across the three core artifacts (`spec.md`, `plan.md`, `tasks.md`) before implementation. This command MUST run only after `/tasks` has successfully produced a complete `tasks.md`.
+目標：実装前に3つのコア成果物（`spec.md`、`plan.md`、`tasks.md`）間の不整合、重複、曖昧さ、仕様不足項目を特定します。このコマンドは`/tasks`が完全な`tasks.md`を正常に生成した後にのみ実行する必要があります。
 
-STRICTLY READ-ONLY: Do **not** modify any files. Output a structured analysis report. Offer an optional remediation plan (user must explicitly approve before any follow-up editing commands would be invoked manually).
+厳格に読み取り専用：ファイルを**変更しない**でください。構造化された分析レポートを出力してください。任意の修正計画を提案してください（ユーザーが明示的に承認してから、手動でフォローアップ編集コマンドを呼び出すことになります）。
 
-Constitution Authority: The project constitution (`/memory/constitution.md`) is **non-negotiable** within this analysis scope. Constitution conflicts are automatically CRITICAL and require adjustment of the spec, plan, or tasks—not dilution, reinterpretation, or silent ignoring of the principle. If a principle itself needs to change, that must occur in a separate, explicit constitution update outside `/analyze`.
+憲法の権威：プロジェクト憲法（`/memory/constitution.md`）はこの分析スコープ内で**交渉不可能**です。憲法との衝突は自動的にCRITICALとなり、仕様、計画、またはタスクの調整が必要です—原則の希釈、再解釈、または黙認は行いません。原則そのものが変更を必要とする場合、それは`/analyze`の外で別個の明示的な憲法更新で行わなければなりません。
 
-Execution steps:
+実行手順：
 
-1. Run `{SCRIPT}` once from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS. Derive absolute paths:
+1. リポジトリルートから`{SCRIPT}`を一度実行し、FEATURE_DIRとAVAILABLE_DOCSのJSONを解析します。絶対パスを導出してください：
    - SPEC = FEATURE_DIR/spec.md
    - PLAN = FEATURE_DIR/plan.md
    - TASKS = FEATURE_DIR/tasks.md
-   Abort with an error message if any required file is missing (instruct the user to run missing prerequisite command).
+   必要なファイルが不足している場合は、エラーメッセージを表示して中止してください（不足している前提条件コマンドを実行するようユーザーに指示してください）。
 
-2. Load artifacts:
-   - Parse spec.md sections: Overview/Context, Functional Requirements, Non-Functional Requirements, User Stories, Edge Cases (if present).
-   - Parse plan.md: Architecture/stack choices, Data Model references, Phases, Technical constraints.
-   - Parse tasks.md: Task IDs, descriptions, phase grouping, parallel markers [P], referenced file paths.
-   - Load constitution `/memory/constitution.md` for principle validation.
+2. 成果物を読み込みます：
+   - spec.mdのセクションを解析：概要/コンテキスト、機能要件、非機能要件、ユーザーストーリー、エッジケース（存在する場合）。
+   - plan.mdを解析：アーキテクチャ/スタック選択、データモデル参照、フェーズ、技術的制約。
+   - tasks.mdを解析：タスクID、説明、フェーズグループ化、並列マーカー[P]、参照ファイルパス。
+   - 原則検証のために憲法`/memory/constitution.md`を読み込みます。
 
-3. Build internal semantic models:
-   - Requirements inventory: Each functional + non-functional requirement with a stable key (derive slug based on imperative phrase; e.g., "User can upload file" -> `user-can-upload-file`).
-   - User story/action inventory.
-   - Task coverage mapping: Map each task to one or more requirements or stories (inference by keyword / explicit reference patterns like IDs or key phrases).
-   - Constitution rule set: Extract principle names and any MUST/SHOULD normative statements.
+3. 内部セマンティックモデルを構築します：
+   - 要件インベントリ：各機能要件・非機能要件に安定したキー（命令句に基づくスラグを導出。例：「ユーザーはファイルをアップロードできる」→`user-can-upload-file`）。
+   - ユーザーストーリー/アクション インベントリ。
+   - タスクカバレッジマッピング：各タスクを1つ以上の要件またはストーリーにマッピング（キーワード/IDまたはキーフレーズなどの明示的参照パターンによる推論）。
+   - 憲法ルールセット：原則名と任意のMUST/SHOULD規範的記述を抽出。
 
-4. Detection passes:
-   A. Duplication detection:
-      - Identify near-duplicate requirements. Mark lower-quality phrasing for consolidation.
-   B. Ambiguity detection:
-      - Flag vague adjectives (fast, scalable, secure, intuitive, robust) lacking measurable criteria.
-      - Flag unresolved placeholders (TODO, TKTK, ???, <placeholder>, etc.).
-   C. Underspecification:
-      - Requirements with verbs but missing object or measurable outcome.
-      - User stories missing acceptance criteria alignment.
-      - Tasks referencing files or components not defined in spec/plan.
-   D. Constitution alignment:
-      - Any requirement or plan element conflicting with a MUST principle.
-      - Missing mandated sections or quality gates from constitution.
-   E. Coverage gaps:
-      - Requirements with zero associated tasks.
-      - Tasks with no mapped requirement/story.
-      - Non-functional requirements not reflected in tasks (e.g., performance, security).
-   F. Inconsistency:
-      - Terminology drift (same concept named differently across files).
-      - Data entities referenced in plan but absent in spec (or vice versa).
-      - Task ordering contradictions (e.g., integration tasks before foundational setup tasks without dependency note).
-      - Conflicting requirements (e.g., one requires to use Next.js while other says to use Vue as the framework).
+4. 検出パス：
+   A. 重複検出：
+      - ほぼ重複する要件を特定します。統合対象として品質の低い表現にマークを付けます。
+   B. 曖昧さ検出：
+      - 測定可能な基準を欠く曖昧な形容詞（高速、スケーラブル、セキュア、直感的、堅牢）にフラグを立てます。
+      - 未解決のプレースホルダー（TODO、TKTK、???、<placeholder>など）にフラグを立てます。
+   C. 仕様不足：
+      - 動詞はあるが目的語や測定可能な結果が不足している要件。
+      - 受入基準の整合性が欠如したユーザーストーリー。
+      - 仕様/計画で定義されていないファイルやコンポーネントを参照するタスク。
+   D. 憲法との整合性：
+      - MUST原則と衝突する任意の要件または計画要素。
+      - 憲法で義務付けられたセクションや品質ゲートの不足。
+   E. カバレッジギャップ：
+      - 関連するタスクがゼロの要件。
+      - マッピングされた要件/ストーリーがないタスク。
+      - タスクに反映されていない非機能要件（パフォーマンス、セキュリティなど）。
+   F. 不整合：
+      - 用語の漂流（同じ概念がファイル間で異なる名前で呼ばれている）。
+      - 計画では参照されているが仕様では不在のデータエンティティ（またはその逆）。
+      - タスク順序の矛盾（依存関係の注記なしに、基礎セットアップタスクより前に統合タスクが配置されているなど）。
+      - 衝突する要件（一つはNext.jsの使用を要求し、別のものはフレームワークとしてVueの使用を指定しているなど）。
 
-5. Severity assignment heuristic:
-   - CRITICAL: Violates constitution MUST, missing core spec artifact, or requirement with zero coverage that blocks baseline functionality.
-   - HIGH: Duplicate or conflicting requirement, ambiguous security/performance attribute, untestable acceptance criterion.
-   - MEDIUM: Terminology drift, missing non-functional task coverage, underspecified edge case.
-   - LOW: Style/wording improvements, minor redundancy not affecting execution order.
+5. 重要度割り当てヒューリスティック：
+   - CRITICAL：憲法のMUSTに違反、コア仕様成果物の不足、またはベースライン機能をブロックするカバレッジゼロの要件。
+   - HIGH：重複または競合する要件、曖昧なセキュリティ/パフォーマンス属性、テスト不可能な受入基準。
+   - MEDIUM：用語の漂流、非機能タスクカバレッジの不足、仕様不足のエッジケース。
+   - LOW：スタイル/文言改善、実行順序に影響しない軽微な冗長性。
 
-6. Produce a Markdown report (no file writes) with sections:
+6. セクション付きのMarkdownレポートを生成します（ファイル書き込みなし）：
 
-   ### Specification Analysis Report
-   | ID | Category | Severity | Location(s) | Summary | Recommendation |
+   ### 仕様分析レポート
+   | ID | カテゴリ | 重要度 | 場所 | 概要 | 推奨事項 |
    |----|----------|----------|-------------|---------|----------------|
-   | A1 | Duplication | HIGH | spec.md:L120-134 | Two similar requirements ... | Merge phrasing; keep clearer version |
-   (Add one row per finding; generate stable IDs prefixed by category initial.)
+   | A1 | 重複 | HIGH | spec.md:L120-134 | 2つの類似した要件... | 表現を統合、より明確なバージョンを保持 |
+   （発見ごとに1行追加、カテゴリの頭文字をプレフィックスとした安定したIDを生成。）
 
-   Additional subsections:
-   - Coverage Summary Table:
-     | Requirement Key | Has Task? | Task IDs | Notes |
-   - Constitution Alignment Issues (if any)
-   - Unmapped Tasks (if any)
-   - Metrics:
-     * Total Requirements
-     * Total Tasks
-     * Coverage % (requirements with >=1 task)
-     * Ambiguity Count
-     * Duplication Count
-     * Critical Issues Count
+   追加サブセクション：
+   - カバレッジ概要テーブル：
+     | 要件キー | タスクあり？ | タスクID | 備考 |
+   - 憲法整合性問題（存在する場合）
+   - マッピングされていないタスク（存在する場合）
+   - メトリクス：
+     * 要件総数
+     * タスク総数
+     * カバレッジ率（>=1タスクがある要件）
+     * 曖昧さ数
+     * 重複数
+     * クリティカル問題数
 
-7. At end of report, output a concise Next Actions block:
-   - If CRITICAL issues exist: Recommend resolving before `/implement`.
-   - If only LOW/MEDIUM: User may proceed, but provide improvement suggestions.
-   - Provide explicit command suggestions: e.g., "Run /specify with refinement", "Run /plan to adjust architecture", "Manually edit tasks.md to add coverage for 'performance-metrics'".
+7. レポートの最後に、簡潔な次のアクションブロックを出力します：
+   - CRITICAL問題が存在する場合：`/implement`の前に解決することを推奨。
+   - LOW/MEDIUMのみの場合：ユーザーは進めることができますが、改善提案を提供。
+   - 明示的なコマンド提案を提供：例：「改良を加えて/specifyを実行」、「アーキテクチャ調整のため/planを実行」、「'performance-metrics'のカバレッジを追加するためtasks.mdを手動編集」。
 
-8. Ask the user: "Would you like me to suggest concrete remediation edits for the top N issues?" (Do NOT apply them automatically.)
+8. ユーザーに質問します：「上位N個の問題について具体的な修正編集を提案しますか？」（自動的には適用しないでください。）
 
-Behavior rules:
-- NEVER modify files.
-- NEVER hallucinate missing sections—if absent, report them.
-- KEEP findings deterministic: if rerun without changes, produce consistent IDs and counts.
-- LIMIT total findings in the main table to 50; aggregate remainder in a summarized overflow note.
-- If zero issues found, emit a success report with coverage statistics and proceed recommendation.
+動作ルール：
+- ファイルを変更しないでください。
+- 存在しないセクションを捏造しないでください—不在の場合はそれを報告してください。
+- 発見を決定論的に保持：変更なしに再実行した場合、一貫したIDと数を生成します。
+- メインテーブルの総発見数を50に制限、残りは要約されたオーバーフロー注記に集約。
+- ゼロ問題が発見された場合、カバレッジ統計と進行推奨を含む成功レポートを出力。
 
-Context: {ARGS}
+コンテキスト：{ARGS}

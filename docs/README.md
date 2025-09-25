@@ -1,33 +1,33 @@
-# Documentation
+# ドキュメント
 
-This folder contains the documentation source files for Spec Kit, built using [DocFX](https://dotnet.github.io/docfx/).
+このフォルダには、[DocFX](https://dotnet.github.io/docfx/)を使用してビルドされるSpec Kitのドキュメントソースファイルが含まれています。
 
-## Building Locally
+## ローカルビルド
 
-To build the documentation locally:
+ローカルでドキュメントをビルドするには：
 
-1. Install DocFX:
+1. DocFXをインストール：
    ```bash
    dotnet tool install -g docfx
    ```
 
-2. Build the documentation:
+2. ドキュメントをビルド：
    ```bash
    cd docs
    docfx docfx.json --serve
    ```
 
-3. Open your browser to `http://localhost:8080` to view the documentation.
+3. ブラウザで`http://localhost:8080`を開いて、ドキュメントを表示します。
 
-## Structure
+## 構造
 
-- `docfx.json` - DocFX configuration file
-- `index.md` - Main documentation homepage
-- `toc.yml` - Table of contents configuration
-- `installation.md` - Installation guide
-- `quickstart.md` - Quick start guide
-- `_site/` - Generated documentation output (ignored by git)
+- `docfx.json` - DocFX設定ファイル
+- `index.md` - メインドキュメントホームページ
+- `toc.yml` - 目次の設定
+- `installation.md` - インストールガイド
+- `quickstart.md` - クイックスタートガイド
+- `_site/` - 生成されたドキュメント出力（gitで無視される）
 
-## Deployment
+## デプロイメント
 
-Documentation is automatically built and deployed to GitHub Pages when changes are pushed to the `main` branch. The workflow is defined in `.github/workflows/docs.yml`.
+ドキュメントは、`main`ブランチに変更がプッシュされると、自動的にビルドされてGitHub Pagesにデプロイされます。ワークフローは`.github/workflows/docs.yml`で定義されています。

@@ -1,122 +1,122 @@
-# Quick Start Guide
+# クイックスタートガイド
 
-This guide will help you get started with Spec-Driven Development using Spec Kit.
+このガイドでは、Spec Kitを使用したSpec-Driven Development（仕様駆動開発）を始める方法をご紹介します。
 
-> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `specify` CLI auto-selects based on OS unless you pass `--script sh|ps`.
+> 新機能: すべての自動化スクリプトはBash（`.sh`）とPowerShell（`.ps1`）の両方のバリアントを提供します。`specify` CLIは`--script sh|ps`オプションを指定しない限り、OSに基づいて自動選択します。
 
-## The 4-Step Process
+## 4ステップのプロセス
 
-### 1. Install Specify
+### 1. Specifyのインストール
 
-Initialize your project depending on the coding agent you're using:
-
-```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME>
-```
-
-Pick script type explicitly (optional):
-```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME> --script ps  # Force PowerShell
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME> --script sh  # Force POSIX shell
-```
-
-### 2. Create the Spec
-
-Use the `/specify` command to describe what you want to build. Focus on the **what** and **why**, not the tech stack.
+使用するコーディングエージェントに応じてプロジェクトを初期化します：
 
 ```bash
-/specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <PROJECT_NAME>
 ```
 
-### 3. Create a Technical Implementation Plan
+スクリプトタイプを明示的に指定する場合（オプション）：
+```bash
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <PROJECT_NAME> --script ps  # PowerShellを強制
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <PROJECT_NAME> --script sh  # POSIXシェルを強制
+```
 
-Use the `/plan` command to provide your tech stack and architecture choices.
+### 2. 仕様の作成
+
+`/specify`コマンドを使用して、構築したいものを説明します。技術スタックではなく、**何を**、**なぜ**構築するかに焦点を当ててください。
 
 ```bash
-/plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
+/specify 写真を別々のフォトアルバムで整理できるアプリケーションを構築します。アルバムは日付でグループ化され、メインページでドラッグアンドドロップで再整理できます。アルバムは他のネストしたアルバムには含まれません。各アルバム内では、写真はタイル状のインターフェースでプレビューされます。
 ```
 
-### 4. Break Down and Implement
+### 3. 技術実装プランの作成
 
-Use `/tasks` to create an actionable task list, then ask your agent to implement the feature.
+`/plan`コマンドを使用して、技術スタックとアーキテクチャの選択肢を提供します。
 
-## Detailed Example: Building Taskify
+```bash
+/plan アプリケーションは最小限のライブラリ数でViteを使用します。可能な限りバニラのHTML、CSS、JavaScriptを使用してください。画像はどこにもアップロードされず、メタデータはローカルのSQLiteデータベースに保存されます。
+```
 
-Here's a complete example of building a team productivity platform:
+### 4. タスクの分割と実装
 
-### Step 1: Define Requirements with `/specify`
+`/tasks`を使用して実行可能なタスクリストを作成し、エージェントに機能の実装を依頼します。
+
+## 詳細な例：Taskifyの構築
+
+チーム生産性プラットフォームを構築する完全な例をご紹介します：
+
+### ステップ1：`/specify`で要件を定義
 
 ```text
-Develop Taskify, a team productivity platform. It should allow users to create projects, add team members,
-assign tasks, comment and move tasks between boards in Kanban style. In this initial phase for this feature,
-let's call it "Create Taskify," let's have multiple users but the users will be declared ahead of time, predefined.
-I want five users in two different categories, one product manager and four engineers. Let's create three
-different sample projects. Let's have the standard Kanban columns for the status of each task, such as "To Do,"
-"In Progress," "In Review," and "Done." There will be no login for this application as this is just the very
-first testing thing to ensure that our basic features are set up. For each task in the UI for a task card,
-you should be able to change the current status of the task between the different columns in the Kanban work board.
-You should be able to leave an unlimited number of comments for a particular card. You should be able to, from that task
-card, assign one of the valid users. When you first launch Taskify, it's going to give you a list of the five users to pick
-from. There will be no password required. When you click on a user, you go into the main view, which displays the list of
-projects. When you click on a project, you open the Kanban board for that project. You're going to see the columns.
-You'll be able to drag and drop cards back and forth between different columns. You will see any cards that are
-assigned to you, the currently logged in user, in a different color from all the other ones, so you can quickly
-see yours. You can edit any comments that you make, but you can't edit comments that other people made. You can
-delete any comments that you made, but you can't delete comments anybody else made.
+チーム生産性プラットフォームであるTaskifyを開発します。ユーザーがプロジェクトを作成し、チームメンバーを追加し、
+タスクを割り当て、コメントを付け、Kanban形式でボード間でタスクを移動できるようにします。この機能の初期段階では、
+「Create Taskify」と呼びましょう。複数のユーザーがいますが、ユーザーは事前に宣言され、事前定義されています。
+2つの異なるカテゴリで5人のユーザーが必要です。1人のプロダクトマネージャーと4人のエンジニアです。3つの
+異なるサンプルプロジェクトを作成しましょう。各タスクのステータス用に、「To Do」、
+「In Progress」、「In Review」、「Done」などの標準的なKanban列を用意します。これは基本機能が
+設定されていることを確認するための最初のテストなので、このアプリケーションにはログインがありません。UI内の各タスクカードについて、
+Kanbanワークボード内の異なる列間でタスクの現在のステータスを変更できるようにします。
+特定のカードに無制限の数のコメントを残すことができるようにします。そのタスク
+カードから、有効なユーザーの1人を割り当てることができるようにします。Taskifyを最初に起動すると、選択する5人のユーザーのリストが
+表示されます。パスワードは不要です。ユーザーをクリックすると、プロジェクトのリストを表示するメインビューに移動します。
+プロジェクトをクリックすると、そのプロジェクトのKanbanボードが開きます。列が表示されます。
+異なる列間でカードをドラッグアンドドロップできます。現在ログインしているユーザーに割り当てられたカードは、
+他のすべてのカードとは異なる色で表示され、自分のものを素早く確認できます。自分が作成したコメントは編集できますが、
+他の人が作成したコメントは編集できません。自分が作成したコメントは削除できますが、
+他の人が作成したコメントは削除できません。
 ```
 
-### Step 2: Refine the Specification
+### ステップ2：仕様の改善
 
-After the initial specification is created, clarify any missing requirements:
+初期仕様が作成された後、不足している要件を明確にします：
 
 ```text
-For each sample project or project that you create there should be a variable number of tasks between 5 and 15
-tasks for each one randomly distributed into different states of completion. Make sure that there's at least
-one task in each stage of completion.
+作成する各サンプルプロジェクトまたはプロジェクトには、完了の異なる状態にランダムに配布された
+5〜15個のタスクの可変数があるべきです。各完了段階に少なくとも
+1つのタスクがあることを確認してください。
 ```
 
-Also validate the specification checklist:
+また、仕様チェックリストを検証します：
 
 ```text
-Read the review and acceptance checklist, and check off each item in the checklist if the feature spec meets the criteria. Leave it empty if it does not.
+レビューと承認のチェックリストを読み、機能仕様が基準を満たしている場合はチェックリストの各項目をチェックしてください。満たしていない場合は空のままにしてください。
 ```
 
-### Step 3: Generate Technical Plan with `/plan`
+### ステップ3：`/plan`で技術プランを生成
 
-Be specific about your tech stack and technical requirements:
+技術スタックと技術要件について具体的に記述します：
 
 ```text
-We are going to generate this using .NET Aspire, using Postgres as the database. The frontend should use
-Blazor server with drag-and-drop task boards, real-time updates. There should be a REST API created with a projects API,
-tasks API, and a notifications API.
+これを.NET Aspireを使用して生成し、データベースとしてPostgresを使用します。フロントエンドは
+ドラッグアンドドロップタスクボード、リアルタイム更新を備えたBlazor serverを使用する必要があります。プロジェクトAPI、
+タスクAPI、通知APIを使用してREST APIを作成する必要があります。
 ```
 
-### Step 4: Validate and Implement
+### ステップ4：検証と実装
 
-Have your AI agent audit the implementation plan:
+AIエージェントに実装プランを監査してもらいます：
 
 ```text
-Now I want you to go and audit the implementation plan and the implementation detail files.
-Read through it with an eye on determining whether or not there is a sequence of tasks that you need
-to be doing that are obvious from reading this. Because I don't know if there's enough here.
+実装プランと実装詳細ファイルを監査してください。
+これを読むことから明らかな、実行する必要のあるタスクのシーケンスがあるかどうかを判断することに重点を置いて
+読み通してください。ここに十分な情報があるかわからないためです。
 ```
 
-Finally, implement the solution:
+最後に、ソリューションを実装します：
 
 ```text
 implement specs/002-create-taskify/plan.md
 ```
 
-## Key Principles
+## 重要な原則
 
-- **Be explicit** about what you're building and why
-- **Don't focus on tech stack** during specification phase
-- **Iterate and refine** your specifications before implementation
-- **Validate** the plan before coding begins
-- **Let the AI agent handle** the implementation details
+- 何を構築するか、なぜ構築するかを**明確に**する
+- 仕様段階では**技術スタックに焦点を当てない**
+- 実装前に仕様を**繰り返し改善**する
+- コーディング開始前にプランを**検証**する
+- 実装の詳細は**AIエージェントに任せる**
 
-## Next Steps
+## 次のステップ
 
-- Read the complete methodology for in-depth guidance
-- Check out more examples in the repository
-- Explore the source code on GitHub
+- 詳細なガイダンスについては、完全な方法論をお読みください
+- リポジトリで他の例をご確認ください
+- GitHubでソースコードを探索してください

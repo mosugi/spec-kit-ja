@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Common PowerShell functions analogous to common.sh
+# common.shに相当する共通PowerShell関数
 
 function Get-RepoRoot {
     try {
@@ -8,30 +8,30 @@ function Get-RepoRoot {
             return $result
         }
     } catch {
-        # Git command failed
+        # Gitコマンドが失敗
     }
-    
-    # Fall back to script location for non-git repos
+
+    # git以外のリポジトリの場合はスクリプトの場所にフォールバック
     return (Resolve-Path (Join-Path $PSScriptRoot "../../..")).Path
 }
 
 function Get-CurrentBranch {
-    # First check if SPECIFY_FEATURE environment variable is set
+    # 最初にSPECIFY_FEATURE環境変数が設定されているかチェック
     if ($env:SPECIFY_FEATURE) {
         return $env:SPECIFY_FEATURE
     }
     
-    # Then check git if available
+    # 次に利用可能ならgitをチェック
     try {
         $result = git rev-parse --abbrev-ref HEAD 2>$null
         if ($LASTEXITCODE -eq 0) {
             return $result
         }
     } catch {
-        # Git command failed
+        # Gitコマンドが失敗
     }
     
-    # For non-git repos, try to find the latest feature directory
+    # git以外のリポジトリの場合、最新のフィーチャーディレクトリを探す
     $repoRoot = Get-RepoRoot
     $specsDir = Join-Path $repoRoot "specs"
     
@@ -54,7 +54,7 @@ function Get-CurrentBranch {
         }
     }
     
-    # Final fallback
+    # 最終的なフォールバック
     return "main"
 }
 
@@ -73,15 +73,15 @@ function Test-FeatureBranch {
         [bool]$HasGit = $true
     )
     
-    # For non-git repos, we can't enforce branch naming but still provide output
+    # git以外のリポジトリでは、ブランチ命名を強制できないが出力は提供
     if (-not $HasGit) {
         Write-Warning "[specify] Warning: Git repository not detected; skipped branch validation"
         return $true
     }
     
     if ($Branch -notmatch '^[0-9]{3}-') {
-        Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
-        Write-Output "Feature branches should be named like: 001-feature-name"
+        Write-Output "エラー: フィーチャーブランチにいません。現在のブランチ: $Branch"
+        Write-Output "フィーチャーブランチは次のような名前にしてください: 001-feature-name"
         return $false
     }
     return $true

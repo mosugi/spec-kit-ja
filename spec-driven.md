@@ -1,170 +1,170 @@
-# Specification-Driven Development (SDD)
+# 仕様駆動開発（Specification-Driven Development, SDD）
 
-## The Power Inversion
+## パワーの逆転
 
-For decades, code has been king. Specifications served code—they were the scaffolding we built and then discarded once the "real work" of coding began. We wrote PRDs to guide development, created design docs to inform implementation, drew diagrams to visualize architecture. But these were always subordinate to the code itself. Code was truth. Everything else was, at best, good intentions. Code was the source of truth, and as it moved forward, specs rarely kept pace. As the asset (code) and the implementation are one, it's not easy to have a parallel implementation without trying to build from the code.
+数十年にわたって、コードこそが王者でした。仕様書はコードに奉仕するもの—コーディングという「本当の仕事」が始まれば捨て去られる足場に過ぎませんでした。私たちは開発を導くためにPRD（プロダクト要求仕様書）を書き、実装を知らせるためにデザイン文書を作成し、アーキテクチャを視覚化するために図表を描きました。しかし、これらは常にコード自体の従属物でした。コードこそが真実でした。その他はせいぜい良き意図に過ぎませんでした。コードが真の情報源であり、それが進歩するにつれて、仕様書がそのペースについていくことはほとんどありませんでした。アセット（コード）と実装が一体である以上、コードから構築することなしに並列実装を持つことは困難でした。
 
-Spec-Driven Development (SDD) inverts this power structure. Specifications don't serve code—code serves specifications. The Product Requirements Document (PRD) isn't a guide for implementation; it's the source that generates implementation. Technical plans aren't documents that inform coding; they're precise definitions that produce code. This isn't an incremental improvement to how we build software. It's a fundamental rethinking of what drives development.
+仕様駆動開発（SDD）は、この権力構造を逆転させます。仕様書がコードに奉仕するのではなく、コードが仕様書に奉仕するのです。プロダクト要求仕様書（PRD）は実装のガイドではなく、実装を生成する源泉なのです。技術計画書はコーディングを知らせる文書ではなく、コードを生成する正確な定義なのです。これはソフトウェア構築方法の段階的改善ではありません。開発を推進するものが何かについての根本的な再考なのです。
 
-The gap between specification and implementation has plagued software development since its inception. We've tried to bridge it with better documentation, more detailed requirements, stricter processes. These approaches fail because they accept the gap as inevitable. They try to narrow it but never eliminate it. SDD eliminates the gap by making specifications and their concrete implementation plans born from the specification executable. When specifications and implementation plans generate code, there is no gap—only transformation.
+仕様と実装の間のギャップは、ソフトウェア開発の黎明期からその発展を阻害してきました。私たちはより良い文書化、より詳細な要件、より厳格なプロセスでそれを埋めようと試みてきました。これらのアプローチは、ギャップを不可避なものとして受け入れるため失敗します。それらはギャップを狭めようとはしますが、決して排除しません。SDDは、仕様書とそれから生まれる具体的な実装計画を実行可能にすることで、ギャップを排除します。仕様書と実装計画がコードを生成するとき、ギャップは存在せず—変換があるだけです。
 
-This transformation is now possible because AI can understand and implement complex specifications, and create detailed implementation plans. But raw AI generation without structure produces chaos. SDD provides that structure through specifications and subsequent implementation plans that are precise, complete, and unambiguous enough to generate working systems. The specification becomes the primary artifact. Code becomes its expression (as an implementation from the implementation plan) in a particular language and framework.
+この変換が今や可能になったのは、AIが複雑な仕様書を理解し実装でき、詳細な実装計画を作成できるからです。しかし、構造のない生のAI生成は混沌を生み出します。SDDは、動作するシステムを生成するのに十分正確で、完全で、曖昧さのない仕様書と、それに続く実装計画を通じてその構造を提供します。仕様書が主要なアーティファクトとなります。コードは、特定の言語とフレームワークにおける（実装計画からの実装としての）その表現となります。
 
-In this new world, maintaining software means evolving specifications. The intent of the development team is expressed in natural language ("**intent-driven development**"), design assets, core principles and other guidelines. The **lingua franca** of development moves to a higher level, and code is the last-mile approach.
+この新しい世界では、ソフトウェアの保守は仕様書の進化を意味します。開発チームの意図は自然言語（「**意図駆動開発**」）、デザインアセット、コア原則、その他のガイドラインで表現されます。開発の**共通語**はより高いレベルに移行し、コードは最後の一歩のアプローチとなります。
 
-Debugging means fixing specifications and their implementation plans that generate incorrect code. Refactoring means restructuring for clarity. The entire development workflow reorganizes around specifications as the central source of truth, with implementation plans and code as the continuously regenerated output. Updating apps with new features or creating a new parallel implementation because we are creative beings, means revisiting the specification and creating new implementation plans. This process is therefore a 0 -> 1, (1', ..), 2, 3, N.
+デバッグは、不正なコードを生成する仕様書とその実装計画を修正することを意味します。リファクタリングは、明確性のための再構築を意味します。開発ワークフロー全体が、仕様書を中心的な真実の源として再編成され、実装計画とコードは継続的に再生成される出力となります。新機能でアプリを更新したり、創造的存在である私たちが新しい並列実装を作成することは、仕様書を再訪し新しい実装計画を作成することを意味します。したがって、このプロセスは 0 -> 1, (1', ..), 2, 3, N です。
 
-The development team focuses in on their creativity, experimentation, their critical thinking.
+開発チームは、創造性、実験、批判的思考に集中します。
 
-## The SDD Workflow in Practice
+## 実践におけるSDDワークフロー
 
-The workflow begins with an idea—often vague and incomplete. Through iterative dialogue with AI, this idea becomes a comprehensive PRD. The AI asks clarifying questions, identifies edge cases, and helps define precise acceptance criteria. What might take days of meetings and documentation in traditional development happens in hours of focused specification work. This transforms the traditional SDLC—requirements and design become continuous activities rather than discrete phases. This is supportive of a **team process**, where team-reviewed specifications are expressed and versioned, created in branches, and merged.
+ワークフローは、しばしば曖昧で不完全なアイデアから始まります。AIとの反復的な対話を通じて、このアイデアは包括的なPRDとなります。AIは明確化の質問をし、エッジケースを特定し、正確な受け入れ基準の定義を支援します。従来の開発では何日もの会議と文書化が必要だったことが、集中的な仕様作成作業の数時間で実現されます。これは従来のSDLCを変革します—要件と設計は、個別のフェーズではなく継続的な活動となります。これは**チームプロセス**を支持し、チームでレビューされた仕様書が表現され、バージョン管理され、ブランチで作成され、マージされます。
 
-When a product manager updates acceptance criteria, implementation plans automatically flag affected technical decisions. When an architect discovers a better pattern, the PRD updates to reflect new possibilities.
+プロダクトマネージャーが受け入れ基準を更新すると、実装計画は影響を受ける技術決定に自動的にフラグを立てます。アーキテクトがより良いパターンを発見すると、PRDは新しい可能性を反映して更新されます。
 
-Throughout this specification process, research agents gather critical context. They investigate library compatibility, performance benchmarks, and security implications. Organizational constraints are discovered and applied automatically—your company's database standards, authentication requirements, and deployment policies seamlessly integrate into every specification.
+この仕様作成プロセス全体を通して、研究エージェントが重要なコンテキストを収集します。彼らはライブラリの互換性、パフォーマンスベンチマーク、セキュリティの影響を調査します。組織の制約が自動的に発見・適用されます—あなたの会社のデータベース標準、認証要件、デプロイメントポリシーがすべての仕様書にシームレスに統合されます。
 
-From the PRD, AI generates implementation plans that map requirements to technical decisions. Every technology choice has documented rationale. Every architectural decision traces back to specific requirements. Throughout this process, consistency validation continuously improves quality. AI analyzes specifications for ambiguity, contradictions, and gaps—not as a one-time gate, but as an ongoing refinement.
+PRDから、AIは要件を技術決定にマッピングする実装計画を生成します。すべての技術選択には文書化された根拠があります。すべてのアーキテクチャ決定は特定の要件にさかのぼることができます。このプロセス全体を通して、一貫性検証が継続的に品質を向上させます。AIは仕様書の曖昧さ、矛盾、ギャップを分析します—一回限りのゲートとしてではなく、継続的な改善として。
 
-Code generation begins as soon as specifications and their implementation plans are stable enough, but they do not have to be "complete." Early generations might be exploratory—testing whether the specification makes sense in practice. Domain concepts become data models. User stories become API endpoints. Acceptance scenarios become tests. This merges development and testing through specification—test scenarios aren't written after code, they're part of the specification that generates both implementation and tests.
+コード生成は、仕様書とその実装計画が十分安定したらすぐに始まりますが、それらが「完成」している必要はありません。初期の生成は探索的かもしれません—仕様書が実際に意味をなすかをテストします。ドメインコンセプトはデータモデルになります。ユーザーストーリーはAPIエンドポイントになります。受け入れシナリオはテストになります。これは仕様書を通じて開発とテストを統合します—テストシナリオはコード後に書かれるのではなく、実装とテストの両方を生成する仕様書の一部なのです。
 
-The feedback loop extends beyond initial development. Production metrics and incidents don't just trigger hotfixes—they update specifications for the next regeneration. Performance bottlenecks become new non-functional requirements. Security vulnerabilities become constraints that affect all future generations. This iterative dance between specification, implementation, and operational reality is where true understanding emerges and where the traditional SDLC transforms into a continuous evolution.
+フィードバックループは初期開発を超えて拡張されます。本番メトリクスとインシデントは単にホットフィックスを引き起こすだけでなく、次の再生成のために仕様書を更新します。パフォーマンスボトルネックは新しい非機能要件となります。セキュリティ脆弱性は将来のすべての生成に影響する制約となります。仕様書、実装、運用の現実の間のこの反復的なダンスこそが、真の理解が生まれる場所であり、従来のSDLCが継続的進化に変革される場所なのです。
 
-## Why SDD Matters Now
+## なぜ今SDDが重要なのか
 
-Three trends make SDD not just possible but necessary:
+3つのトレンドがSDDを可能にするだけでなく必要なものにしています：
 
-First, AI capabilities have reached a threshold where natural language specifications can reliably generate working code. This isn't about replacing developers—it's about amplifying their effectiveness by automating the mechanical translation from specification to implementation. It can amplify exploration and creativity, support "start-over" easily, and support addition, subtraction, and critical thinking.
+第一に、AI機能は自然言語仕様から動作するコードを確実に生成できる閾値に達しました。これは開発者を置き換えることではなく—仕様から実装への機械的な翻訳を自動化することで彼らの効果を増幅することです。探索と創造性を増幅し、「やり直し」を簡単にサポートし、追加、削減、批判的思考をサポートできます。
 
-Second, software complexity continues to grow exponentially. Modern systems integrate dozens of services, frameworks, and dependencies. Keeping all these pieces aligned with original intent through manual processes becomes increasingly difficult. SDD provides systematic alignment through specification-driven generation. Frameworks may evolve to provide AI-first support, not human-first support, or architect around reusable components.
+第二に、ソフトウェアの複雑さは指数関数的に増大し続けています。現代のシステムは何十ものサービス、フレームワーク、依存関係を統合します。手動プロセスを通じてこれらすべての部品を元の意図と一致させ続けることは、ますます困難になっています。SDDは仕様駆動生成を通じて体系的な整合性を提供します。フレームワークは、人間優先ではなくAI優先のサポートを提供するように、または再利用可能なコンポーネントを中心に設計されるように進化するかもしれません。
 
-Third, the pace of change accelerates. Requirements change far more rapidly today than ever before. Pivoting is no longer exceptional—it's expected. Modern product development demands rapid iteration based on user feedback, market conditions, and competitive pressures. Traditional development treats these changes as disruptions. Each pivot requires manually propagating changes through documentation, design, and code. The result is either slow, careful updates that limit velocity, or fast, reckless changes that accumulate technical debt.
+第三に、変化のペースが加速しています。要件は今日、かつてないほど迅速に変化します。方向転換はもはや例外的ではありません—期待されるものです。現代のプロダクト開発は、ユーザーフィードバック、市場状況、競争圧力に基づく迅速な反復を要求します。従来の開発では、これらの変化を混乱として扱います。各方向転換には、文書、設計、コードを通じた変更の手動伝播が必要です。結果は、速度を制限する慎重で遅い更新か、技術的負債を蓄積する迅速で無謀な変更のどちらかです。
 
-SDD can support what-if/simulation experiments: "If we need to re-implement or change the application to promote a business need to sell more T-shirts, how would we implement and experiment for that?"
+SDDは仮定実験をサポートできます：「Tシャツをもっと売るというビジネスニーズを促進するためにアプリケーションを再実装または変更する必要がある場合、それをどのように実装し実験するか？」
 
-SDD transforms requirement changes from obstacles into normal workflow. When specifications drive implementation, pivots become systematic regenerations rather than manual rewrites. Change a core requirement in the PRD, and affected implementation plans update automatically. Modify a user story, and corresponding API endpoints regenerate. This isn't just about initial development—it's about maintaining engineering velocity through inevitable changes.
+SDDは要件変更を障害から通常のワークフローに変換します。仕様が実装を駆動する場合、方向転換は手動の書き直しではなく体系的な再生成となります。PRDのコア要件を変更すると、影響を受ける実装計画が自動的に更新されます。ユーザーストーリーを修正すると、対応するAPIエンドポイントが再生成されます。これは初期開発だけの話ではありません—避けられない変化を通じてエンジニアリング速度を維持することなのです。
 
-## Core Principles
+## コア原則
 
-**Specifications as the Lingua Franca**: The specification becomes the primary artifact. Code becomes its expression in a particular language and framework. Maintaining software means evolving specifications.
+**共通語としての仕様書**: 仕様書が主要なアーティファクトとなります。コードは、特定の言語とフレームワークにおけるその表現となります。ソフトウェアの保守は、仕様書の進化を意味します。
 
-**Executable Specifications**: Specifications must be precise, complete, and unambiguous enough to generate working systems. This eliminates the gap between intent and implementation.
+**実行可能な仕様書**: 仕様書は、動作するシステムを生成するのに十分正確で、完全で、曖昧さがないものでなければなりません。これは意図と実装の間のギャップを排除します。
 
-**Continuous Refinement**: Consistency validation happens continuously, not as a one-time gate. AI analyzes specifications for ambiguity, contradictions, and gaps as an ongoing process.
+**継続的改善**: 一貫性検証は一度限りのゲートではなく、継続的に実行されます。AIは進行中のプロセスとして、仕様書の曖昧さ、矛盾、ギャップを分析します。
 
-**Research-Driven Context**: Research agents gather critical context throughout the specification process, investigating technical options, performance implications, and organizational constraints.
+**研究駆動のコンテキスト**: 研究エージェントが仕様プロセス全体を通じて重要なコンテキストを収集し、技術オプション、パフォーマンスへの影響、組織の制約を調査します。
 
-**Bidirectional Feedback**: Production reality informs specification evolution. Metrics, incidents, and operational learnings become inputs for specification refinement.
+**双方向フィードバック**: 本番環境の現実が仕様の進化を知らせます。メトリクス、インシデント、運用から得た学習が仕様改善のインプットとなります。
 
-**Branching for Exploration**: Generate multiple implementation approaches from the same specification to explore different optimization targets—performance, maintainability, user experience, cost.
+**探索のためのブランチング**: 同じ仕様から複数の実装アプローチを生成し、パフォーマンス、保守性、ユーザーエクスペリエンス、コストという異なる最適化ターゲットを探索します。
 
-## Implementation Approaches
+## 実装アプローチ
 
-Today, practicing SDD requires assembling existing tools and maintaining discipline throughout the process. The methodology can be practiced with:
+現在、SDDを実践するには既存のツールを組み合わせ、プロセス全体を通じて規律を維持する必要があります。この手法は以下で実践できます：
 
-- AI assistants for iterative specification development
-- Research agents for gathering technical context
-- Code generation tools for translating specifications to implementation
-- Version control systems adapted for specification-first workflows
-- Consistency checking through AI analysis of specification documents
+- 反復的な仕様開発のためのAIアシスタント
+- 技術的コンテキスト収集のための研究エージェント
+- 仕様から実装への翻訳のためのコード生成ツール
+- 仕様優先ワークフローに適応したバージョン管理システム
+- 仕様文書のAI分析による一貫性チェック
 
-The key is treating specifications as the source of truth, with code as the generated output that serves the specification rather than the other way around.
+重要なのは、仕様書を真実の源として扱い、コードをその逆ではなく仕様書に奉仕する生成された出力として扱うことです。
 
-## Streamlining SDD with Commands
+## コマンドによるSDDの効率化
 
-The SDD methodology is significantly enhanced through three powerful commands that automate the specification → planning → tasking workflow:
+SDD手法は、仕様 → 計画 → タスク化のワークフローを自動化する3つの強力なコマンドによって大幅に強化されます：
 
-### The `/specify` Command
+### `/specify` コマンド
 
-This command transforms a simple feature description (the user-prompt) into a complete, structured specification with automatic repository management:
+このコマンドは、シンプルな機能記述（ユーザープロンプト）を自動リポジトリ管理付きの完全で構造化された仕様に変換します：
 
-1. **Automatic Feature Numbering**: Scans existing specs to determine the next feature number (e.g., 001, 002, 003)
-2. **Branch Creation**: Generates a semantic branch name from your description and creates it automatically
-3. **Template-Based Generation**: Copies and customizes the feature specification template with your requirements
-4. **Directory Structure**: Creates the proper `specs/[branch-name]/` structure for all related documents
+1. **自動機能番号付け**: 既存の仕様をスキャンして次の機能番号を決定（例：001, 002, 003）
+2. **ブランチ作成**: あなたの記述からセマンティックなブランチ名を生成し、自動的に作成
+3. **テンプレートベース生成**: 機能仕様テンプレートをコピーし、あなたの要件でカスタマイズ
+4. **ディレクトリ構造**: すべての関連文書のための適切な `specs/[branch-name]/` 構造を作成
 
-### The `/plan` Command
+### `/plan` コマンド
 
-Once a feature specification exists, this command creates a comprehensive implementation plan:
+機能仕様が存在すると、このコマンドは包括的な実装計画を作成します：
 
-1. **Specification Analysis**: Reads and understands the feature requirements, user stories, and acceptance criteria
-2. **Constitutional Compliance**: Ensures alignment with project constitution and architectural principles
-3. **Technical Translation**: Converts business requirements into technical architecture and implementation details
-4. **Detailed Documentation**: Generates supporting documents for data models, API contracts, and test scenarios
-5. **Quickstart Validation**: Produces a quickstart guide capturing key validation scenarios
+1. **仕様分析**: 機能要件、ユーザーストーリー、受け入れ基準を読み取り理解
+2. **憲法遵守**: プロジェクト憲法とアーキテクチャ原則との整合を確保
+3. **技術的翻訳**: ビジネス要件を技術アーキテクチャと実装詳細に変換
+4. **詳細文書**: データモデル、API契約、テストシナリオのためのサポート文書を生成
+5. **クイックスタート検証**: 主要な検証シナリオを捕捉したクイックスタートガイドを作成
 
-### The `/tasks` Command
+### `/tasks` コマンド
 
-After a plan is created, this command analyzes the plan and related design documents to generate an executable task list:
+計画が作成された後、このコマンドは計画と関連設計文書を分析して実行可能なタスクリストを生成します：
 
-1. **Inputs**: Reads `plan.md` (required) and, if present, `data-model.md`, `contracts/`, and `research.md`
-2. **Task Derivation**: Converts contracts, entities, and scenarios into specific tasks
-3. **Parallelization**: Marks independent tasks `[P]` and outlines safe parallel groups
-4. **Output**: Writes `tasks.md` in the feature directory, ready for execution by a Task agent
+1. **入力**: `plan.md`（必須）と、存在する場合は `data-model.md`、`contracts/`、`research.md` を読み取り
+2. **タスク導出**: 契約、エンティティ、シナリオを特定のタスクに変換
+3. **並列化**: 独立したタスクに `[P]` をマークし、安全な並列グループを概説
+4. **出力**: 機能ディレクトリに `tasks.md` を書き込み、タスクエージェントによる実行の準備完了
 
-### Example: Building a Chat Feature
+### 例：チャット機能の構築
 
-Here's how these commands transform the traditional development workflow:
+以下は、これらのコマンドが従来の開発ワークフローをどのように変革するかです：
 
-**Traditional Approach:**
+**従来のアプローチ:**
 
 ```text
-1. Write a PRD in a document (2-3 hours)
-2. Create design documents (2-3 hours)
-3. Set up project structure manually (30 minutes)
-4. Write technical specifications (3-4 hours)
-5. Create test plans (2 hours)
-Total: ~12 hours of documentation work
+1. 文書にPRDを書く（2-3時間）
+2. 設計文書を作成する（2-3時間）
+3. プロジェクト構造を手動で設定する（30分）
+4. 技術仕様を書く（3-4時間）
+5. テスト計画を作成する（2時間）
+合計：約12時間の文書作成作業
 ```
 
-**SDD with Commands Approach:**
+**SDDコマンドアプローチ:**
 
 ```bash
-# Step 1: Create the feature specification (5 minutes)
-/specify Real-time chat system with message history and user presence
+# ステップ1: 機能仕様を作成（5分）
+/specify メッセージ履歴とユーザープレゼンス機能付きのリアルタイムチャットシステム
 
-# This automatically:
-# - Creates branch "003-chat-system"
-# - Generates specs/003-chat-system/spec.md
-# - Populates it with structured requirements
+# これにより自動的に：
+# - ブランチ "003-chat-system" を作成
+# - specs/003-chat-system/spec.md を生成
+# - 構造化された要件で内容を構成
 
-# Step 2: Generate implementation plan (5 minutes)
-/plan WebSocket for real-time messaging, PostgreSQL for history, Redis for presence
+# ステップ2: 実装計画を生成（5分）
+/plan リアルタイムメッセージングにWebSocket、履歴にPostgreSQL、プレゼンスにRedisを使用
 
-# Step 3: Generate executable tasks (5 minutes)
+# ステップ3: 実行可能なタスクを生成（5分）
 /tasks
 
-# This automatically creates:
+# これにより自動的に作成されます：
 # - specs/003-chat-system/plan.md
-# - specs/003-chat-system/research.md (WebSocket library comparisons)
-# - specs/003-chat-system/data-model.md (Message and User schemas)
-# - specs/003-chat-system/contracts/ (WebSocket events, REST endpoints)
-# - specs/003-chat-system/quickstart.md (Key validation scenarios)
-# - specs/003-chat-system/tasks.md (Task list derived from the plan)
+# - specs/003-chat-system/research.md（WebSocketライブラリ比較）
+# - specs/003-chat-system/data-model.md（MessageとUserスキーマ）
+# - specs/003-chat-system/contracts/（WebSocketイベント、RESTエンドポイント）
+# - specs/003-chat-system/quickstart.md（主要な検証シナリオ）
+# - specs/003-chat-system/tasks.md（計画から導出されたタスクリスト）
 ```
 
-In 15 minutes, you have:
+15分で、以下が手に入ります：
 
-- A complete feature specification with user stories and acceptance criteria
-- A detailed implementation plan with technology choices and rationale
-- API contracts and data models ready for code generation
-- Comprehensive test scenarios for both automated and manual testing
-- All documents properly versioned in a feature branch
+- ユーザーストーリーと受け入れ基準を含む完全な機能仕様
+- 技術選択と根拠を含む詳細な実装計画
+- コード生成の準備ができたAPI契約とデータモデル
+- 自動および手動テストの両方のための包括的なテストシナリオ
+- すべての文書が機能ブランチで適切にバージョン管理される
 
-### The Power of Structured Automation
+### 構造化された自動化の力
 
-These commands don't just save time—they enforce consistency and completeness:
+これらのコマンドは単に時間を節約するだけでなく、一貫性と完全性を強制します：
 
-1. **No Forgotten Details**: Templates ensure every aspect is considered, from non-functional requirements to error handling
-2. **Traceable Decisions**: Every technical choice links back to specific requirements
-3. **Living Documentation**: Specifications stay in sync with code because they generate it
-4. **Rapid Iteration**: Change requirements and regenerate plans in minutes, not days
+1. **忘れられた詳細なし**: テンプレートが非機能要件からエラーハンドリングまで、すべての側面が考慮されることを保証
+2. **追跡可能な決定**: すべての技術選択が特定の要件にリンクバック
+3. **生きた文書**: 仕様がコードを生成するため、コードと同期を保つ
+4. **高速反復**: 要件を変更し、数日でなく数分で計画を再生成
 
-The commands embody SDD principles by treating specifications as executable artifacts rather than static documents. They transform the specification process from a necessary evil into the driving force of development.
+これらのコマンドは、仕様を静的な文書ではなく実行可能なアーティファクトとして扱うことでSDD原則を体現します。仕様プロセスを必要悪から開発の推進力へと変革します。
 
-### Template-Driven Quality: How Structure Constrains LLMs for Better Outcomes
+### テンプレート駆動品質：構造がLLMをより優れた結果に向けて制約する方法
 
-The true power of these commands lies not just in automation, but in how the templates guide LLM behavior toward higher-quality specifications. The templates act as sophisticated prompts that constrain the LLM's output in productive ways:
+これらのコマンドの真の力は、自動化だけでなく、テンプレートがLLMの行動をより高品質な仕様に向けて導く方法にあります。テンプレートは、LLMの出力を生産的な方法で制約する洗練されたプロンプトとして機能します：
 
 #### 1. **Preventing Premature Implementation Details**
 
@@ -266,13 +266,13 @@ These constraints work together to produce specifications that are:
 
 The templates transform the LLM from a creative writer into a disciplined specification engineer, channeling its capabilities toward producing consistently high-quality, executable specifications that truly drive development.
 
-## The Constitutional Foundation: Enforcing Architectural Discipline
+## 憲法的基盤：アーキテクチャ規律の強制
 
-At the heart of SDD lies a constitution—a set of immutable principles that govern how specifications become code. The constitution (`memory/constitution.md`) acts as the architectural DNA of the system, ensuring that every generated implementation maintains consistency, simplicity, and quality.
+SDDの中核には憲法—仕様がコードになる方法を統治する不変の原則の集合—があります。憲法（`memory/constitution.md`）はシステムのアーキテクチャDNAとして機能し、生成されたすべての実装が一貫性、シンプルさ、品質を維持することを保証します。
 
-### The Nine Articles of Development
+### 開発の9章
 
-The constitution defines nine articles that shape every aspect of the development process:
+憲法は、開発プロセスのあらゆる側面を形作る9つの章を定義します：
 
 #### Article I: Library-First Principle
 
@@ -396,8 +396,8 @@ The constitution isn't just a rulebook—it's a philosophy that shapes how LLMs 
 
 By embedding these principles into the specification and planning process, SDD ensures that generated code isn't just functional—it's maintainable, testable, and architecturally sound. The constitution transforms AI from a code generator into an architectural partner that respects and reinforces system design principles.
 
-## The Transformation
+## 変革
 
-This isn't about replacing developers or automating creativity. It's about amplifying human capability by automating mechanical translation. It's about creating a tight feedback loop where specifications, research, and code evolve together, each iteration bringing deeper understanding and better alignment between intent and implementation.
+これは開発者を置き換えたり、創造性を自動化したりすることではありません。機械的な翻訳を自動化することで人間の能力を増幅することです。仕様、研究、コードが一緒に進化する緊密なフィードバックループを作成することで、各反復がより深い理解と意図と実装の間のより良い整合性をもたらします。
 
-Software development needs better tools for maintaining alignment between intent and implementation. SDD provides the methodology for achieving this alignment through executable specifications that generate code rather than merely guiding it.
+ソフトウェア開発には、意図と実装の間の整合性を維持するためのより良いツールが必要です。SDDは、単にコードを導くだけでなくコードを生成する実行可能な仕様を通じてこの整合性を達成するための手法を提供します。

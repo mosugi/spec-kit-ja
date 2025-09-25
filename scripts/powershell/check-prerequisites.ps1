@@ -1,18 +1,18 @@
 #!/usr/bin/env pwsh
 
-# Consolidated prerequisite checking script (PowerShell)
+# 統合前提条件チェックスクリプト（PowerShell版）
 #
-# This script provides unified prerequisite checking for Spec-Driven Development workflow.
-# It replaces the functionality previously spread across multiple scripts.
+# このスクリプトはSpec-Driven Developmentワークフローの統一された前提条件チェックを提供します。
+# 以前は複数のスクリプトに分散していた機能を統合したものです。
 #
-# Usage: ./check-prerequisites.ps1 [OPTIONS]
+# 使用方法: ./check-prerequisites.ps1 [オプション]
 #
-# OPTIONS:
-#   -Json               Output in JSON format
-#   -RequireTasks       Require tasks.md to exist (for implementation phase)
-#   -IncludeTasks       Include tasks.md in AVAILABLE_DOCS list
-#   -PathsOnly          Only output path variables (no validation)
-#   -Help, -h           Show help message
+# オプション:
+#   -Json               JSON形式で出力
+#   -RequireTasks       tasks.mdの存在を必須とする（実装フェーズ用）
+#   -IncludeTasks       AVAILABLE_DOCSリストにtasks.mdを含める
+#   -PathsOnly          パス変数のみを出力（検証なし）
+#   -Help, -h           ヘルプメッセージを表示
 
 [CmdletBinding()]
 param(
@@ -25,7 +25,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# Show help if requested
+# ヘルプが要求された場合は表示
 if ($Help) {
     Write-Output @"
 Usage: check-prerequisites.ps1 [OPTIONS]
@@ -53,17 +53,17 @@ EXAMPLES:
     exit 0
 }
 
-# Source common functions
+# 共通関数を読み込み
 . "$PSScriptRoot/common.ps1"
 
-# Get feature paths and validate branch
+# フィーチャーパスを取得してブランチを検証
 $paths = Get-FeaturePathsEnv
 
 if (-not (Test-FeatureBranch -Branch $paths.CURRENT_BRANCH -HasGit:$paths.HAS_GIT)) { 
     exit 1 
 }
 
-# If paths-only mode, output paths and exit (support combined -Json -PathsOnly)
+# パスのみモードの場合、パスを出力して終了（-Json -PathsOnlyの組み合わせをサポート）
 if ($PathsOnly) {
     if ($Json) {
         [PSCustomObject]@{
@@ -85,7 +85,7 @@ if ($PathsOnly) {
     exit 0
 }
 
-# Validate required directories and files
+# 必要なディレクトリとファイルを検証
 if (-not (Test-Path $paths.FEATURE_DIR -PathType Container)) {
     Write-Output "ERROR: Feature directory not found: $($paths.FEATURE_DIR)"
     Write-Output "Run /specify first to create the feature structure."
@@ -98,45 +98,45 @@ if (-not (Test-Path $paths.IMPL_PLAN -PathType Leaf)) {
     exit 1
 }
 
-# Check for tasks.md if required
+# 必要な場合はtasks.mdの存在をチェック
 if ($RequireTasks -and -not (Test-Path $paths.TASKS -PathType Leaf)) {
     Write-Output "ERROR: tasks.md not found in $($paths.FEATURE_DIR)"
     Write-Output "Run /tasks first to create the task list."
     exit 1
 }
 
-# Build list of available documents
+# 利用可能なドキュメントのリストを構築
 $docs = @()
 
-# Always check these optional docs
+# これらのオプションドキュメントを常にチェック
 if (Test-Path $paths.RESEARCH) { $docs += 'research.md' }
 if (Test-Path $paths.DATA_MODEL) { $docs += 'data-model.md' }
 
-# Check contracts directory (only if it exists and has files)
+# contractsディレクトリをチェック（存在し、ファイルがある場合のみ）
 if ((Test-Path $paths.CONTRACTS_DIR) -and (Get-ChildItem -Path $paths.CONTRACTS_DIR -ErrorAction SilentlyContinue | Select-Object -First 1)) { 
     $docs += 'contracts/' 
 }
 
 if (Test-Path $paths.QUICKSTART) { $docs += 'quickstart.md' }
 
-# Include tasks.md if requested and it exists
+# 要求され、存在する場合はtasks.mdを含める
 if ($IncludeTasks -and (Test-Path $paths.TASKS)) { 
     $docs += 'tasks.md' 
 }
 
-# Output results
+# 結果を出力
 if ($Json) {
-    # JSON output
+    # JSON出力
     [PSCustomObject]@{ 
         FEATURE_DIR = $paths.FEATURE_DIR
         AVAILABLE_DOCS = $docs 
     } | ConvertTo-Json -Compress
 } else {
-    # Text output
+    # テキスト出力
     Write-Output "FEATURE_DIR:$($paths.FEATURE_DIR)"
     Write-Output "AVAILABLE_DOCS:"
     
-    # Show status of each potential document
+    # 各潜在的なドキュメントのステータスを表示
     Test-FileExists -Path $paths.RESEARCH -Description 'research.md' | Out-Null
     Test-FileExists -Path $paths.DATA_MODEL -Description 'data-model.md' | Out-Null
     Test-DirHasFiles -Path $paths.CONTRACTS_DIR -Description 'contracts/' | Out-Null

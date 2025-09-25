@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Create a new feature
+# 新しいフィーチャーを作成
 [CmdletBinding()]
 param(
     [switch]$Json,
@@ -14,9 +14,9 @@ if (-not $FeatureDescription -or $FeatureDescription.Count -eq 0) {
 }
 $featureDesc = ($FeatureDescription -join ' ').Trim()
 
-# Resolve repository root. Prefer git information when available, but fall back
-# to searching for repository markers so the workflow still functions in repositories that
-# were initialised with --no-git.
+# リポジトリルートを解決。利用可能な場合はgit情報を優先するが、
+# --no-gitで初期化されたリポジトリでもワークフローが機能するよう
+# リポジトリマーカーの検索にフォールバック。
 function Find-RepositoryRoot {
     param(
         [string]$StartDir,
@@ -31,7 +31,7 @@ function Find-RepositoryRoot {
         }
         $parent = Split-Path $current -Parent
         if ($parent -eq $current) {
-            # Reached filesystem root without finding markers
+            # マーカーを見つけることなくファイルシステムルートに到達
             return $null
         }
         $current = $parent
@@ -48,7 +48,7 @@ try {
     if ($LASTEXITCODE -eq 0) {
         $hasGit = $true
     } else {
-        throw "Git not available"
+        throw "Gitが利用できません"
     }
 } catch {
     $repoRoot = $fallbackRoot
@@ -80,10 +80,10 @@ if ($hasGit) {
     try {
         git checkout -b $branchName | Out-Null
     } catch {
-        Write-Warning "Failed to create git branch: $branchName"
+        Write-Warning "gitブランチの作成に失敗しました: $branchName"
     }
 } else {
-    Write-Warning "[specify] Warning: Git repository not detected; skipped branch creation for $branchName"
+    Write-Warning "[specify] 警告: Gitリポジトリが検出されませんでした。$branchNameのブランチ作成をスキップしました"
 }
 
 $featureDir = Join-Path $specsDir $branchName
@@ -97,7 +97,7 @@ if (Test-Path $template) {
     New-Item -ItemType File -Path $specFile | Out-Null 
 }
 
-# Set the SPECIFY_FEATURE environment variable for the current session
+# 現在のセッション用にSPECIFY_FEATURE環境変数を設定
 $env:SPECIFY_FEATURE = $branchName
 
 if ($Json) {

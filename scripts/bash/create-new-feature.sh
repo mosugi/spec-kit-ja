@@ -18,7 +18,7 @@ if [ -z "$FEATURE_DESCRIPTION" ]; then
     exit 1
 fi
 
-# Function to find the repository root by searching for existing project markers
+# 既存のプロジェクトマーカーを検索してリポジトリルートを見つける関数
 find_repo_root() {
     local dir="$1"
     while [ "$dir" != "/" ]; do
@@ -31,9 +31,9 @@ find_repo_root() {
     return 1
 }
 
-# Resolve repository root. Prefer git information when available, but fall back
-# to searching for repository markers so the workflow still functions in repositories that
-# were initialised with --no-git.
+# リポジトリルートを解決。利用可能な場合はgit情報を優先するが、
+# --no-gitで初期化されたリポジトリでもワークフローが機能するように
+# リポジトリマーカーを検索することにフォールバック。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if git rev-parse --show-toplevel >/dev/null 2>&1; then
@@ -74,7 +74,7 @@ BRANCH_NAME="${FEATURE_NUM}-${WORDS}"
 if [ "$HAS_GIT" = true ]; then
     git checkout -b "$BRANCH_NAME"
 else
-    >&2 echo "[specify] Warning: Git repository not detected; skipped branch creation for $BRANCH_NAME"
+    >&2 echo "[specify] 警告: Gitリポジトリが検出されません; $BRANCH_NAMEのブランチ作成をスキップしました"
 fi
 
 FEATURE_DIR="$SPECS_DIR/$BRANCH_NAME"
@@ -84,7 +84,7 @@ TEMPLATE="$REPO_ROOT/.specify/templates/spec-template.md"
 SPEC_FILE="$FEATURE_DIR/spec.md"
 if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$SPEC_FILE"; else touch "$SPEC_FILE"; fi
 
-# Set the SPECIFY_FEATURE environment variable for the current session
+# 現在のセッション用にSPECIFY_FEATURE環境変数を設定
 export SPECIFY_FEATURE="$BRANCH_NAME"
 
 if $JSON_MODE; then

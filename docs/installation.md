@@ -1,86 +1,86 @@
-# Installation Guide
+# インストールガイド
 
-## Prerequisites
+## 前提条件
 
-- **Linux/macOS** (or Windows; PowerShell scripts now supported without WSL)
-- AI coding agent: [Claude Code](https://www.anthropic.com/claude-code), [GitHub Copilot](https://code.visualstudio.com/), or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
-- [uv](https://docs.astral.sh/uv/) for package management
+- **Linux/macOS**（またはWindows; WSLなしでPowerShellスクリプトがサポートされています）
+- AIコーディングエージェント: [Claude Code](https://www.anthropic.com/claude-code)、[GitHub Copilot](https://code.visualstudio.com/)、または[Gemini CLI](https://github.com/google-gemini/gemini-cli)
+- パッケージ管理用の[uv](https://docs.astral.sh/uv/)
 - [Python 3.11+](https://www.python.org/downloads/)
 - [Git](https://git-scm.com/downloads)
 
-## Installation
+## インストール
 
-### Initialize a New Project
+### 新しいプロジェクトの初期化
 
-The easiest way to get started is to initialize a new project:
-
-```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME>
-```
-
-Or initialize in the current directory:
+最も簡単な方法は、新しいプロジェクトを初期化することです：
 
 ```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init --here
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <PROJECT_NAME>
 ```
 
-### Specify AI Agent
-
-You can proactively specify your AI agent during initialization:
+または現在のディレクトリで初期化する場合：
 
 ```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <project_name> --ai claude
-uvx --from git+https://github.com/github/spec-kit.git specify init <project_name> --ai gemini
-uvx --from git+https://github.com/github/spec-kit.git specify init <project_name> --ai copilot
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init --here
 ```
 
-### Specify Script Type (Shell vs PowerShell)
+### AIエージェントの指定
 
-All automation scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants.
-
-Auto behavior:
-- Windows default: `ps`
-- Other OS default: `sh`
-- Interactive mode: you'll be prompted unless you pass `--script`
-
-Force a specific script type:
-```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <project_name> --script sh
-uvx --from git+https://github.com/github/spec-kit.git specify init <project_name> --script ps
-```
-
-### Ignore Agent Tools Check
-
-If you prefer to get the templates without checking for the right tools:
+初期化時にAIエージェントを事前に指定できます：
 
 ```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <project_name> --ai claude --ignore-agent-tools
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <project_name> --ai claude
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <project_name> --ai gemini
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <project_name> --ai copilot
 ```
 
-## Verification
+### スクリプトタイプの指定（Shell vs PowerShell）
 
-After initialization, you should see the following commands available in your AI agent:
-- `/specify` - Create specifications
-- `/plan` - Generate implementation plans  
-- `/tasks` - Break down into actionable tasks
+すべての自動化スクリプトには、Bash（`.sh`）とPowerShell（`.ps1`）の両方のバリエーションがあります。
 
-The `.specify/scripts` directory will contain both `.sh` and `.ps1` scripts.
+自動動作：
+- Windowsデフォルト：`ps`
+- その他のOSデフォルト：`sh`
+- インタラクティブモード：`--script`を渡さない限りプロンプトが表示されます
 
-## Troubleshooting
+特定のスクリプトタイプを強制する場合：
+```bash
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <project_name> --script sh
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <project_name> --script ps
+```
 
-### Git Credential Manager on Linux
+### エージェントツールチェックを無視
 
-If you're having issues with Git authentication on Linux, you can install Git Credential Manager:
+適切なツールをチェックせずにテンプレートを取得したい場合：
+
+```bash
+uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <project_name> --ai claude --ignore-agent-tools
+```
+
+## 動作確認
+
+初期化後、AIエージェントで以下のコマンドが利用可能になっているはずです：
+- `/specify` - 仕様書の作成
+- `/plan` - 実装計画の生成
+- `/tasks` - 実行可能なタスクへの分解
+
+`.specify/scripts`ディレクトリには`.sh`と`.ps1`の両方のスクリプトが含まれます。
+
+## トラブルシューティング
+
+### LinuxでのGit Credential Manager
+
+LinuxでGit認証に問題がある場合は、Git Credential Managerをインストールできます：
 
 ```bash
 #!/usr/bin/env bash
 set -e
-echo "Downloading Git Credential Manager v2.6.1..."
+echo "Git Credential Manager v2.6.1をダウンロードしています..."
 wget https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.6.1/gcm-linux_amd64.2.6.1.deb
-echo "Installing Git Credential Manager..."
+echo "Git Credential Managerをインストールしています..."
 sudo dpkg -i gcm-linux_amd64.2.6.1.deb
-echo "Configuring Git to use GCM..."
+echo "GitでGCMを使用するように設定しています..."
 git config --global credential.helper manager
-echo "Cleaning up..."
+echo "クリーンアップ中..."
 rm gcm-linux_amd64.2.6.1.deb
 ```

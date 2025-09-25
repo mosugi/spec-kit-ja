@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-# Consolidated prerequisite checking script
+# 統合前提条件チェックスクリプト
 #
-# This script provides unified prerequisite checking for Spec-Driven Development workflow.
-# It replaces the functionality previously spread across multiple scripts.
+# このスクリプトはSpec-Driven Development（仕様駆動開発）ワークフロー用の統合された前提条件チェックを提供します。
+# 以前は複数のスクリプトに散らばっていた機能を統合しています。
 #
-# Usage: ./check-prerequisites.sh [OPTIONS]
+# 使用法: ./check-prerequisites.sh [OPTIONS]
 #
 # OPTIONS:
-#   --json              Output in JSON format
-#   --require-tasks     Require tasks.md to exist (for implementation phase)
-#   --include-tasks     Include tasks.md in AVAILABLE_DOCS list
-#   --paths-only        Only output path variables (no validation)
-#   --help, -h          Show help message
+#   --json              JSON形式で出力
+#   --require-tasks     tasks.mdが存在することを要求（実装フェーズ用）
+#   --include-tasks     AVAILABLE_DOCSリストにtasks.mdを含める
+#   --paths-only        パス変数のみ出力（バリデーション無し）
+#   --help, -h          ヘルプメッセージを表示
 #
 # OUTPUTS:
 #   JSON mode: {"FEATURE_DIR":"...", "AVAILABLE_DOCS":["..."]}
@@ -21,7 +21,7 @@
 
 set -e
 
-# Parse command line arguments
+# コマンドライン引数を解析
 JSON_MODE=false
 REQUIRE_TASKS=false
 INCLUDE_TASKS=false
@@ -74,18 +74,18 @@ EOF
     esac
 done
 
-# Source common functions
+# 共通関数を読み込み
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# Get feature paths and validate branch
+# 機能パスを取得してブランチをバリデート
 eval $(get_feature_paths)
 check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 
-# If paths-only mode, output paths and exit (support JSON + paths-only combined)
+# paths-onlyモードの場合、パスを出力して終了（JSON + paths-onlyの組み合わせもサポート）
 if $PATHS_ONLY; then
     if $JSON_MODE; then
-        # Minimal JSON paths payload (no validation performed)
+        # 最小限のJSONパスペイロード（バリデーションは行わない）
         printf '{"REPO_ROOT":"%s","BRANCH":"%s","FEATURE_DIR":"%s","FEATURE_SPEC":"%s","IMPL_PLAN":"%s","TASKS":"%s"}\n' \
             "$REPO_ROOT" "$CURRENT_BRANCH" "$FEATURE_DIR" "$FEATURE_SPEC" "$IMPL_PLAN" "$TASKS"
     else
@@ -99,7 +99,7 @@ if $PATHS_ONLY; then
     exit 0
 fi
 
-# Validate required directories and files
+# 必要なディレクトリとファイルをバリデート
 if [[ ! -d "$FEATURE_DIR" ]]; then
     echo "ERROR: Feature directory not found: $FEATURE_DIR" >&2
     echo "Run /specify first to create the feature structure." >&2
@@ -112,35 +112,35 @@ if [[ ! -f "$IMPL_PLAN" ]]; then
     exit 1
 fi
 
-# Check for tasks.md if required
+# 必要な場合はtasks.mdをチェック
 if $REQUIRE_TASKS && [[ ! -f "$TASKS" ]]; then
     echo "ERROR: tasks.md not found in $FEATURE_DIR" >&2
     echo "Run /tasks first to create the task list." >&2
     exit 1
 fi
 
-# Build list of available documents
+# 利用可能なドキュメントのリストを構築
 docs=()
 
-# Always check these optional docs
+# これらのオプショナルなドキュメントを常にチェック
 [[ -f "$RESEARCH" ]] && docs+=("research.md")
 [[ -f "$DATA_MODEL" ]] && docs+=("data-model.md")
 
-# Check contracts directory (only if it exists and has files)
+# contractsディレクトリをチェック（存在してファイルがある場合のみ）
 if [[ -d "$CONTRACTS_DIR" ]] && [[ -n "$(ls -A "$CONTRACTS_DIR" 2>/dev/null)" ]]; then
     docs+=("contracts/")
 fi
 
 [[ -f "$QUICKSTART" ]] && docs+=("quickstart.md")
 
-# Include tasks.md if requested and it exists
+# 要求された場合で存在する場合はtasks.mdを含める
 if $INCLUDE_TASKS && [[ -f "$TASKS" ]]; then
     docs+=("tasks.md")
 fi
 
-# Output results
+# 結果を出力
 if $JSON_MODE; then
-    # Build JSON array of documents
+    # ドキュメントのJSON配列を構築
     if [[ ${#docs[@]} -eq 0 ]]; then
         json_docs="[]"
     else
@@ -150,11 +150,11 @@ if $JSON_MODE; then
     
     printf '{"FEATURE_DIR":"%s","AVAILABLE_DOCS":%s}\n' "$FEATURE_DIR" "$json_docs"
 else
-    # Text output
+    # テキスト出力
     echo "FEATURE_DIR:$FEATURE_DIR"
     echo "AVAILABLE_DOCS:"
     
-    # Show status of each potential document
+    # 各潜在的ドキュメントのステータスを表示
     check_file "$RESEARCH" "research.md"
     check_file "$DATA_MODEL" "data-model.md"
     check_dir "$CONTRACTS_DIR" "contracts/"

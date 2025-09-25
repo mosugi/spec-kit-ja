@@ -1,64 +1,64 @@
 #!/usr/bin/env bash
 
-# Update agent context files with information from plan.md
+# plan.mdからの情報でエージェントコンテキストファイルを更新
 #
-# This script maintains AI agent context files by parsing feature specifications 
-# and updating agent-specific configuration files with project information.
+# このスクリプトは、機能仕様を解析し、AIエージェント固有の設定ファイルを
+# プロジェクト情報で更新することにAIエージェントコンテキストファイルを維持します。
 #
-# MAIN FUNCTIONS:
-# 1. Environment Validation
-#    - Verifies git repository structure and branch information
-#    - Checks for required plan.md files and templates
-#    - Validates file permissions and accessibility
+# 主要機能:
+# 1. 環境バリデーション
+#    - gitリポジトリ構造とブランチ情報を検証
+#    - 必要なplan.mdファイルとテンプレートをチェック
+#    - ファイル権限とアクセシビリティを検証
 #
-# 2. Plan Data Extraction
-#    - Parses plan.md files to extract project metadata
-#    - Identifies language/version, frameworks, databases, and project types
-#    - Handles missing or incomplete specification data gracefully
+# 2. 計画データ抽出
+#    - plan.mdファイルを解析してプロジェクトメタデータを抽出
+#    - 言語/バージョン、フレームワーク、データベース、プロジェクトタイプを識別
+#    - 欠落したり不完全な仕様データを適切に処理
 #
-# 3. Agent File Management
-#    - Creates new agent context files from templates when needed
-#    - Updates existing agent files with new project information
-#    - Preserves manual additions and custom configurations
-#    - Supports multiple AI agent formats and directory structures
+# 3. エージェントファイル管理
+#    - 必要に応じてテンプレートから新しいエージェントコンテキストファイルを作成
+#    - 既存のエージェントファイルを新しいプロジェクト情報で更新
+#    - 手動追加とカスタム設定を保持
+#    - 複数のAIエージェント形式とディレクトリ構造をサポート
 #
-# 4. Content Generation
-#    - Generates language-specific build/test commands
-#    - Creates appropriate project directory structures
-#    - Updates technology stacks and recent changes sections
-#    - Maintains consistent formatting and timestamps
+# 4. コンテンツ生成
+#    - 言語固有のビルド/テストコマンドを生成
+#    - 適切なプロジェクトディレクトリ構造を作成
+#    - 技術スタックと最近の変更セクションを更新
+#    - 一負したフォーマットとタイムスタンプを維持
 #
-# 5. Multi-Agent Support
-#    - Handles agent-specific file paths and naming conventions
-#    - Supports: Claude, Gemini, Copilot, Cursor, Qwen, opencode, Codex, Windsurf
-#    - Can update single agents or all existing agent files
-#    - Creates default Claude file if no agent files exist
+# 5. マルチエージェントサポート
+#    - エージェント固有のファイルパスと命名規約を処理
+#    - サポート対象: Claude, Gemini, Copilot, Cursor, Qwen, opencode, Codex, Windsurf
+#    - 単一エージェントまたは既存の全エージェントファイルを更新可能
+#    - エージェントファイルが存在しない場合はデフォルトのClaudeファイルを作成
 #
-# Usage: ./update-agent-context.sh [agent_type]
-# Agent types: claude|gemini|copilot|cursor|qwen|opencode|codex|windsurf
-# Leave empty to update all existing agent files
+# 使用法: ./update-agent-context.sh [agent_type]
+# エージェントタイプ: claude|gemini|copilot|cursor|qwen|opencode|codex|windsurf
+# 既存の全エージェントファイルを更新する場合は空で留める
 
 set -e
 
-# Enable strict error handling
+# 厳密なエラーハンドリングを有効化
 set -u
 set -o pipefail
 
 #==============================================================================
-# Configuration and Global Variables
+# 設定とグローバル変数
 #==============================================================================
 
-# Get script directory and load common functions
+# スクリプトディレクトリを取得し、共通関数を読み込み
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# Get all paths and variables from common functions
+# 共通関数から全パスと変数を取得
 eval $(get_feature_paths)
 
-NEW_PLAN="$IMPL_PLAN"  # Alias for compatibility with existing code
+NEW_PLAN="$IMPL_PLAN"  # 既存コードとの互換性のためのエイリアス
 AGENT_TYPE="${1:-}"
 
-# Agent-specific file paths  
+# エージェント固有のファイルパス
 CLAUDE_FILE="$REPO_ROOT/CLAUDE.md"
 GEMINI_FILE="$REPO_ROOT/GEMINI.md"
 COPILOT_FILE="$REPO_ROOT/.github/copilot-instructions.md"
@@ -70,17 +70,17 @@ KILOCODE_FILE="$REPO_ROOT/.kilocode/rules/specify-rules.md"
 AUGGIE_FILE="$REPO_ROOT/.augment/rules/specify-rules.md"
 ROO_FILE="$REPO_ROOT/.roo/rules/specify-rules.md"
 
-# Template file
+# テンプレートファイル
 TEMPLATE_FILE="$REPO_ROOT/.specify/templates/agent-file-template.md"
 
-# Global variables for parsed plan data
+# 解析された計画データ用のグローバル変数
 NEW_LANG=""
 NEW_FRAMEWORK=""
 NEW_DB=""
 NEW_PROJECT_TYPE=""
 
 #==============================================================================
-# Utility Functions
+# ユーティリティ関数
 #==============================================================================
 
 log_info() {
@@ -99,7 +99,7 @@ log_warning() {
     echo "WARNING: $1" >&2
 }
 
-# Cleanup function for temporary files
+# 一時ファイル用のクリーンアップ関数
 cleanup() {
     local exit_code=$?
     rm -f /tmp/agent_update_*_$$
@@ -107,44 +107,44 @@ cleanup() {
     exit $exit_code
 }
 
-# Set up cleanup trap
+# クリーンアップトラップを設定
 trap cleanup EXIT INT TERM
 
 #==============================================================================
-# Validation Functions
+# バリデーション関数
 #==============================================================================
 
 validate_environment() {
-    # Check if we have a current branch/feature (git or non-git)
+    # 現在のブランチ/機能があるかチェック（gitまたは非git）
     if [[ -z "$CURRENT_BRANCH" ]]; then
         log_error "Unable to determine current feature"
         if [[ "$HAS_GIT" == "true" ]]; then
-            log_info "Make sure you're on a feature branch"
+            log_info "機能ブランチ上にいることを確認してください"
         else
-            log_info "Set SPECIFY_FEATURE environment variable or create a feature first"
+            log_info "SPECIFY_FEATURE環境変数を設定するか、まず機能を作成してください"
         fi
         exit 1
     fi
     
-    # Check if plan.md exists
+    # plan.mdが存在するかチェック
     if [[ ! -f "$NEW_PLAN" ]]; then
         log_error "No plan.md found at $NEW_PLAN"
-        log_info "Make sure you're working on a feature with a corresponding spec directory"
+        log_info "対応する仕様ディレクトリを持つ機能で作業していることを確認してください"
         if [[ "$HAS_GIT" != "true" ]]; then
-            log_info "Use: export SPECIFY_FEATURE=your-feature-name or create a new feature first"
+            log_info "使用方法: export SPECIFY_FEATURE=your-feature-name またはまず新しい機能を作成してください"
         fi
         exit 1
     fi
     
-    # Check if template exists (needed for new files)
+    # テンプレートが存在するかチェック（新しいファイル用）
     if [[ ! -f "$TEMPLATE_FILE" ]]; then
         log_warning "Template file not found at $TEMPLATE_FILE"
-        log_warning "Creating new agent files will fail"
+        log_warning "新しいエージェントファイルの作成に失敗します"
     fi
 }
 
 #==============================================================================
-# Plan Parsing Functions
+# 計画解析関数
 #==============================================================================
 
 extract_plan_field() {
@@ -172,30 +172,30 @@ parse_plan_data() {
         return 1
     fi
     
-    log_info "Parsing plan data from $plan_file"
+    log_info "$plan_fileから計画データを解析中"
     
     NEW_LANG=$(extract_plan_field "Language/Version" "$plan_file")
     NEW_FRAMEWORK=$(extract_plan_field "Primary Dependencies" "$plan_file")
     NEW_DB=$(extract_plan_field "Storage" "$plan_file")
     NEW_PROJECT_TYPE=$(extract_plan_field "Project Type" "$plan_file")
     
-    # Log what we found
+    # 発見した内容をログ出力
     if [[ -n "$NEW_LANG" ]]; then
-        log_info "Found language: $NEW_LANG"
+        log_info "言語を発見: $NEW_LANG"
     else
-        log_warning "No language information found in plan"
+        log_warning "計画に言語情報が見つかりません"
     fi
     
     if [[ -n "$NEW_FRAMEWORK" ]]; then
-        log_info "Found framework: $NEW_FRAMEWORK"
+        log_info "フレームワークを発見: $NEW_FRAMEWORK"
     fi
     
     if [[ -n "$NEW_DB" ]] && [[ "$NEW_DB" != "N/A" ]]; then
-        log_info "Found database: $NEW_DB"
+        log_info "データベースを発見: $NEW_DB"
     fi
     
     if [[ -n "$NEW_PROJECT_TYPE" ]]; then
-        log_info "Found project type: $NEW_PROJECT_TYPE"
+        log_info "プロジェクトタイプを発見: $NEW_PROJECT_TYPE"
     fi
 }
 
@@ -204,17 +204,17 @@ format_technology_stack() {
     local framework="$2"
     local parts=()
     
-    # Add non-empty parts
+    # 空でない部分を追加
     [[ -n "$lang" && "$lang" != "NEEDS CLARIFICATION" ]] && parts+=("$lang")
     [[ -n "$framework" && "$framework" != "NEEDS CLARIFICATION" && "$framework" != "N/A" ]] && parts+=("$framework")
     
-    # Join with proper formatting
+    # 適切なフォーマットで結合
     if [[ ${#parts[@]} -eq 0 ]]; then
         echo ""
     elif [[ ${#parts[@]} -eq 1 ]]; then
         echo "${parts[0]}"
     else
-        # Join multiple parts with " + "
+        # 複数の部分を" + "で結合
         local result="${parts[0]}"
         for ((i=1; i<${#parts[@]}; i++)); do
             result="$result + ${parts[i]}"
@@ -224,7 +224,7 @@ format_technology_stack() {
 }
 
 #==============================================================================
-# Template and Content Generation Functions
+# テンプレートとコンテンツ生成関数
 #==============================================================================
 
 get_project_structure() {
@@ -251,7 +251,7 @@ get_commands_for_language() {
             echo "npm test && npm run lint"
             ;;
         *)
-            echo "# Add commands for $lang"
+            echo "# $lang用のコマンドを追加"
             ;;
     esac
 }
@@ -277,14 +277,14 @@ create_new_agent_file() {
         return 1
     fi
     
-    log_info "Creating new agent context file from template..."
+    log_info "テンプレートから新しいエージェントコンテキストファイルを作成中..."
     
     if ! cp "$TEMPLATE_FILE" "$temp_file"; then
         log_error "Failed to copy template file"
         return 1
     fi
     
-    # Replace template placeholders
+    # テンプレートプレースホルダーを置換
     local project_structure
     project_structure=$(get_project_structure "$NEW_PROJECT_TYPE")
     
@@ -294,13 +294,13 @@ create_new_agent_file() {
     local language_conventions
     language_conventions=$(get_language_conventions "$NEW_LANG")
     
-    # Perform substitutions with error checking using safer approach
-    # Escape special characters for sed by using a different delimiter or escaping
+    # より安全なアプローチでエラーチェック付きで置換を実行
+    # 異なる区切り文字を使用するかエスケープしてsed用の特殊文字をエスケープ
     local escaped_lang=$(printf '%s\n' "$NEW_LANG" | sed 's/[\[\.*^$()+{}|]/\\&/g')
     local escaped_framework=$(printf '%s\n' "$NEW_FRAMEWORK" | sed 's/[\[\.*^$()+{}|]/\\&/g')
     local escaped_branch=$(printf '%s\n' "$CURRENT_BRANCH" | sed 's/[\[\.*^$()+{}|]/\\&/g')
     
-    # Build technology stack and recent change strings conditionally
+    # 条件付きで技術スタックと最近の変更文字列を構築
     local tech_stack
     if [[ -n "$escaped_lang" && -n "$escaped_framework" ]]; then
         tech_stack="- $escaped_lang + $escaped_framework ($escaped_branch)"
@@ -341,11 +341,11 @@ create_new_agent_file() {
         fi
     done
     
-    # Convert \n sequences to actual newlines
+    # \nシーケンスを実際の改行文字に変換
     newline=$(printf '\n')
     sed -i.bak2 "s/\\\\n/${newline}/g" "$temp_file"
     
-    # Clean up backup files
+    # バックアップファイルをクリーンアップ
     rm -f "$temp_file.bak" "$temp_file.bak2"
     
     return 0
@@ -358,21 +358,21 @@ update_existing_agent_file() {
     local target_file="$1"
     local current_date="$2"
     
-    log_info "Updating existing agent context file..."
+    log_info "既存のエージェントコンテキストファイルを更新中..."
     
-    # Use a single temporary file for atomic update
+    # アトミック更新用の単一一時ファイルを使用
     local temp_file
     temp_file=$(mktemp) || {
         log_error "Failed to create temporary file"
         return 1
     }
     
-    # Process the file in one pass
+    # ファイルを一度のパスで処理
     local tech_stack=$(format_technology_stack "$NEW_LANG" "$NEW_FRAMEWORK")
     local new_tech_entries=()
     local new_change_entry=""
     
-    # Prepare new technology entries
+    # 新しい技術エントリを準備
     if [[ -n "$tech_stack" ]] && ! grep -q "$tech_stack" "$target_file"; then
         new_tech_entries+=("- $tech_stack ($CURRENT_BRANCH)")
     fi
@@ -381,14 +381,14 @@ update_existing_agent_file() {
         new_tech_entries+=("- $NEW_DB ($CURRENT_BRANCH)")
     fi
     
-    # Prepare new change entry
+    # 新しい変更エントリを準備
     if [[ -n "$tech_stack" ]]; then
         new_change_entry="- $CURRENT_BRANCH: Added $tech_stack"
     elif [[ -n "$NEW_DB" ]] && [[ "$NEW_DB" != "N/A" ]] && [[ "$NEW_DB" != "NEEDS CLARIFICATION" ]]; then
         new_change_entry="- $CURRENT_BRANCH: Added $NEW_DB"
     fi
     
-    # Process file line by line
+    # ファイルを行ごとに処理
     local in_tech_section=false
     local in_changes_section=false
     local tech_entries_added=false
@@ -396,13 +396,13 @@ update_existing_agent_file() {
     local existing_changes_count=0
     
     while IFS= read -r line || [[ -n "$line" ]]; do
-        # Handle Active Technologies section
+        # アクティブテクノロジーセクションを処理
         if [[ "$line" == "## Active Technologies" ]]; then
             echo "$line" >> "$temp_file"
             in_tech_section=true
             continue
         elif [[ $in_tech_section == true ]] && [[ "$line" =~ ^##[[:space:]] ]]; then
-            # Add new tech entries before closing the section
+            # セクションを閉じる前に新しい技術エントリを追加
             if [[ $tech_entries_added == false ]] && [[ ${#new_tech_entries[@]} -gt 0 ]]; then
                 printf '%s\n' "${new_tech_entries[@]}" >> "$temp_file"
                 tech_entries_added=true
@@ -411,7 +411,7 @@ update_existing_agent_file() {
             in_tech_section=false
             continue
         elif [[ $in_tech_section == true ]] && [[ -z "$line" ]]; then
-            # Add new tech entries before empty line in tech section
+            # 技術セクションの空行前に新しい技術エントリを追加
             if [[ $tech_entries_added == false ]] && [[ ${#new_tech_entries[@]} -gt 0 ]]; then
                 printf '%s\n' "${new_tech_entries[@]}" >> "$temp_file"
                 tech_entries_added=true
@@ -420,10 +420,10 @@ update_existing_agent_file() {
             continue
         fi
         
-        # Handle Recent Changes section
+        # 最近の変更セクションを処理
         if [[ "$line" == "## Recent Changes" ]]; then
             echo "$line" >> "$temp_file"
-            # Add new change entry right after the heading
+            # ヘッダーの直後に新しい変更エントリを追加
             if [[ -n "$new_change_entry" ]]; then
                 echo "$new_change_entry" >> "$temp_file"
             fi
@@ -435,7 +435,7 @@ update_existing_agent_file() {
             in_changes_section=false
             continue
         elif [[ $in_changes_section == true ]] && [[ "$line" == "- "* ]]; then
-            # Keep only first 2 existing changes
+            # 既存の変更の最初の2つだけを保持
             if [[ $existing_changes_count -lt 2 ]]; then
                 echo "$line" >> "$temp_file"
                 ((existing_changes_count++))
@@ -443,7 +443,7 @@ update_existing_agent_file() {
             continue
         fi
         
-        # Update timestamp
+        # タイムスタンプを更新
         if [[ "$line" =~ \*\*Last\ updated\*\*:.*[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] ]]; then
             echo "$line" | sed "s/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/$current_date/" >> "$temp_file"
         else
@@ -451,12 +451,12 @@ update_existing_agent_file() {
         fi
     done < "$target_file"
     
-    # Post-loop check: if we're still in the Active Technologies section and haven't added new entries
+    # ループ後チェック: まだアクティブテクノロジーセクションにいて新しいエントリを追加していない場合
     if [[ $in_tech_section == true ]] && [[ $tech_entries_added == false ]] && [[ ${#new_tech_entries[@]} -gt 0 ]]; then
         printf '%s\n' "${new_tech_entries[@]}" >> "$temp_file"
     fi
     
-    # Move temp file to target atomically
+    # 一時ファイルをターゲットにアトミックに移動
     if ! mv "$temp_file" "$target_file"; then
         log_error "Failed to update target file"
         rm -f "$temp_file"
@@ -466,7 +466,7 @@ update_existing_agent_file() {
     return 0
 }
 #==============================================================================
-# Main Agent File Update Function
+# メインエージェントファイル更新関数
 #==============================================================================
 
 update_agent_file() {
@@ -478,14 +478,14 @@ update_agent_file() {
         return 1
     fi
     
-    log_info "Updating $agent_name context file: $target_file"
+    log_info "$agent_nameコンテキストファイルを更新中: $target_file"
     
     local project_name
     project_name=$(basename "$REPO_ROOT")
     local current_date
     current_date=$(date +%Y-%m-%d)
     
-    # Create directory if it doesn't exist
+    # ディレクトリが存在しない場合は作成
     local target_dir
     target_dir=$(dirname "$target_file")
     if [[ ! -d "$target_dir" ]]; then
@@ -496,7 +496,7 @@ update_agent_file() {
     fi
     
     if [[ ! -f "$target_file" ]]; then
-        # Create new file from template
+        # テンプレートから新しいファイルを作成
         local temp_file
         temp_file=$(mktemp) || {
             log_error "Failed to create temporary file"
@@ -505,7 +505,7 @@ update_agent_file() {
         
         if create_new_agent_file "$target_file" "$temp_file" "$project_name" "$current_date"; then
             if mv "$temp_file" "$target_file"; then
-                log_success "Created new $agent_name context file"
+                log_success "新しい$agent_nameコンテキストファイルを作成しました"
             else
                 log_error "Failed to move temporary file to $target_file"
                 rm -f "$temp_file"
@@ -517,7 +517,7 @@ update_agent_file() {
             return 1
         fi
     else
-        # Update existing file
+        # 既存ファイルを更新
         if [[ ! -r "$target_file" ]]; then
             log_error "Cannot read existing file: $target_file"
             return 1
@@ -529,7 +529,7 @@ update_agent_file() {
         fi
         
         if update_existing_agent_file "$target_file" "$current_date"; then
-            log_success "Updated existing $agent_name context file"
+            log_success "既存の$agent_nameコンテキストファイルを更新しました"
         else
             log_error "Failed to update existing agent file"
             return 1
@@ -540,7 +540,7 @@ update_agent_file() {
 }
 
 #==============================================================================
-# Agent Selection and Processing
+# エージェント選択と処理
 #==============================================================================
 
 update_specific_agent() {
@@ -591,7 +591,7 @@ update_specific_agent() {
 update_all_existing_agents() {
     local found_agent=false
     
-    # Check each possible agent file and update if it exists
+    # 各可能なエージェントファイルをチェックし、存在する場合は更新
     if [[ -f "$CLAUDE_FILE" ]]; then
         update_agent_file "$CLAUDE_FILE" "Claude Code"
         found_agent=true
@@ -642,78 +642,78 @@ update_all_existing_agents() {
         found_agent=true
     fi
     
-    # If no agent files exist, create a default Claude file
+    # エージェントファイルが存在しない場合は、デフォルトのClaudeファイルを作成
     if [[ "$found_agent" == false ]]; then
-        log_info "No existing agent files found, creating default Claude file..."
+        log_info "既存のエージェントファイルが見つかりません、デフォルトのClaudeファイルを作成中..."
         update_agent_file "$CLAUDE_FILE" "Claude Code"
     fi
 }
 print_summary() {
     echo
-    log_info "Summary of changes:"
+    log_info "変更の概要:"
     
     if [[ -n "$NEW_LANG" ]]; then
-        echo "  - Added language: $NEW_LANG"
+        echo "  - 言語を追加: $NEW_LANG"
     fi
     
     if [[ -n "$NEW_FRAMEWORK" ]]; then
-        echo "  - Added framework: $NEW_FRAMEWORK"
+        echo "  - フレームワークを追加: $NEW_FRAMEWORK"
     fi
     
     if [[ -n "$NEW_DB" ]] && [[ "$NEW_DB" != "N/A" ]]; then
-        echo "  - Added database: $NEW_DB"
+        echo "  - データベースを追加: $NEW_DB"
     fi
     
     echo
-    log_info "Usage: $0 [claude|gemini|copilot|cursor|qwen|opencode|codex|windsurf|kilocode|auggie|roo]"
+    log_info "使用方法: $0 [claude|gemini|copilot|cursor|qwen|opencode|codex|windsurf|kilocode|auggie|roo]"
 }
 
 #==============================================================================
-# Main Execution
+# メイン実行
 #==============================================================================
 
 main() {
-    # Validate environment before proceeding
+    # 続行する前に環境をバリデート
     validate_environment
     
-    log_info "=== Updating agent context files for feature $CURRENT_BRANCH ==="
+    log_info "=== 機能$CURRENT_BRANCHのエージェントコンテキストファイルを更新中 ==="
     
-    # Parse the plan file to extract project information
+    # 計画ファイルを解析してプロジェクト情報を抽出
     if ! parse_plan_data "$NEW_PLAN"; then
         log_error "Failed to parse plan data"
         exit 1
     fi
     
-    # Process based on agent type argument
+    # エージェントタイプ引数に基づいて処理
     local success=true
     
     if [[ -z "$AGENT_TYPE" ]]; then
-        # No specific agent provided - update all existing agent files
-        log_info "No agent specified, updating all existing agent files..."
+        # 特定のエージェントが指定されていない - 既存の全エージェントファイルを更新
+        log_info "エージェントが指定されていません、既存の全エージェントファイルを更新中..."
         if ! update_all_existing_agents; then
             success=false
         fi
     else
-        # Specific agent provided - update only that agent
-        log_info "Updating specific agent: $AGENT_TYPE"
+        # 特定のエージェントが指定されている - そのエージェントのみを更新
+        log_info "特定のエージェントを更新中: $AGENT_TYPE"
         if ! update_specific_agent "$AGENT_TYPE"; then
             success=false
         fi
     fi
     
-    # Print summary
+    # 概要を出力
     print_summary
     
     if [[ "$success" == true ]]; then
-        log_success "Agent context update completed successfully"
+        log_success "エージェントコンテキスト更新が正常に完了しました"
         exit 0
     else
-        log_error "Agent context update completed with errors"
+        log_error "エージェントコンテキスト更新がエラーで完了しました"
         exit 1
     fi
 }
 
-# Execute main function if script is run directly
+# スクリプトが直接実行された場合はメイン関数を実行
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi
