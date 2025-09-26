@@ -186,9 +186,13 @@ specify init my-project --ai windsurf
 specify init my-project --ai copilot --script ps
 
 # 現在のディレクトリで初期化
+specify init . --ai copilot
+# or use the --here flag
 specify init --here --ai copilot
 
 # 確認なしで現在の（空でない）ディレクトリに強制マージ
+specify init . --force --ai copilot
+# or 
 specify init --here --force --ai copilot
 
 # git初期化をスキップ
@@ -298,8 +302,12 @@ specify init <project_name>
 または現在のディレクトリで初期化：
 
 ```bash
+specify init .
+# or use the --here flag
 specify init --here
-# ディレクトリに既にファイルがある場合の確認をスキップ
+# Skip confirmation when the directory already has files
+specify init . --force
+# or
 specify init --here --force
 ```
 
@@ -316,10 +324,15 @@ specify init <project_name> --ai qwen
 specify init <project_name> --ai opencode
 specify init <project_name> --ai codex
 specify init <project_name> --ai windsurf
-# または現在のディレクトリで：
+# Or in current directory:
+specify init . --ai claude
+specify init . --ai codex
+# or use --here flag
 specify init --here --ai claude
 specify init --here --ai codex
-# 空でない現在のディレクトリに強制マージ
+# Force merge into a non-empty current directory
+specify init . --force --ai claude
+# or
 specify init --here --force --ai claude
 ```
 
@@ -343,7 +356,7 @@ specify init <project_name> --ai claude --ignore-agent-tools
 /constitution コード品質、テスト基準、ユーザーエクスペリエンスの一貫性、パフォーマンス要件に焦点を当てた原則を作成する。これらの原則が技術的決定と実装選択をどのように導くべきかのガバナンスを含める。
 ```
 
-このステップでは、AIエージェントが仕様、計画、実装フェーズで参照するプロジェクトの基本ガイドラインを含む`/memory/constitution.md`ファイルを作成または更新します。
+This step creates or updates the `.specify/memory/constitution.md` file with your project's foundational guidelines that the AI agent will reference during specification, planning, and implementation phases.
 
 ### **ステップ2：** プロジェクト仕様の作成
 
@@ -382,21 +395,22 @@ specify init <project_name> --ai claude --ignore-agent-tools
 この段階では、プロジェクトフォルダの内容は以下のようになっているはずです：
 
 ```text
-├── memory
-│	 └── constitution.md
-├── scripts
-│	 ├── check-prerequisites.sh
-│	 ├── common.sh
-│	 ├── create-new-feature.sh
-│	 ├── setup-plan.sh
-│	 └── update-claude-md.sh
-├── specs
-│	 └── 001-create-taskify
-│	     └── spec.md
-└── templates
-    ├── plan-template.md
-    ├── spec-template.md
-    └── tasks-template.md
+└── .specify
+    ├── memory
+    │	 └── constitution.md
+    ├── scripts
+    │	 ├── check-prerequisites.sh
+    │	 ├── common.sh
+    │	 ├── create-new-feature.sh
+    │	 ├── setup-plan.sh
+    │	 └── update-claude-md.sh
+    ├── specs
+    │	 └── 001-create-taskify
+    │	     └── spec.md
+    └── templates
+        ├── plan-template.md
+        ├── spec-template.md
+        └── tasks-template.md
 ```
 
 ### **ステップ3：** 機能仕様の明確化（計画前に必須）

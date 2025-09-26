@@ -68,9 +68,15 @@ specs/[###-feature]/
 └── tasks.md             # フェーズ2出力（/tasksコマンド - /planでは作成されない）
 ```
 
-### ソースコード（リポジトリルート）
+### Source Code (repository root)
+<!--
+  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
+  for this feature. Delete unused options and expand the chosen structure with
+  real paths (e.g., apps/admin, packages/something). The delivered plan must
+  not include Option labels.
+-->
 ```
-# オプション1: 単一プロジェクト（デフォルト）
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
 ├── models/
 ├── services/
@@ -82,7 +88,7 @@ tests/
 ├── integration/
 └── unit/
 
-# オプション2: Webアプリケーション（"frontend" + "backend"が検出された場合）
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
 backend/
 ├── src/
 │   ├── models/
@@ -97,15 +103,15 @@ frontend/
 │   └── services/
 └── tests/
 
-# オプション3: モバイル + API（"iOS/Android"が検出された場合）
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
 api/
 └── [上記backendと同様]
 
 ios/ or android/
-└── [プラットフォーム固有の構造]
+└── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**構造決定**: [技術コンテキストでweb/mobileアプリが示されていない限り、オプション1がデフォルト]
+**Structure Decision**: [DEFAULT to Option 1 unless Technical Context indicates web/mobile app]
 
 ## フェーズ0: アウトラインと調査
 1. **上記の技術コンテキストから未知の項目を抽出**:

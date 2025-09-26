@@ -21,7 +21,9 @@ uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init <PROJECT_N
 または現在のディレクトリで初期化する場合：
 
 ```bash
-uvx --from git+https://github.com/mosugi/spec-kit-ja.git specify init --here
+uvx --from git+https://github.com/github/spec-kit.git specify init .
+# or use the --here flag
+uvx --from git+https://github.com/github/spec-kit.git specify init --here
 ```
 
 ### AIエージェントの指定

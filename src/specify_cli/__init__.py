@@ -12,13 +12,15 @@
 """
 Specify CLI - Specifyプロジェクトのセットアップツール
 
-使用方法:
-    uvx specify-cli.py init <プロジェクト名>
+Usage:
+    uvx specify-cli.py init <project-name>
+    uvx specify-cli.py init .
     uvx specify-cli.py init --here
 
 またはグローバルインストール:
     uv tool install --from specify-cli.py specify-cli
-    specify init <プロジェクト名>
+    specify init <project-name>
+    uvx specify-cli.py init .
     specify init --here
 """
 
@@ -190,11 +192,11 @@ MINI_BANNER = """
 def get_key():
     """クロスプラットフォームでreadcharを使用して単一のキー入力を取得。"""
     key = readchar.readkey()
-
-    # 矢印キー
-    if key == readchar.key.UP:
+    
+    # Arrow keys
+    if key == readchar.key.UP or key == readchar.key.CTRL_P:
         return 'up'
-    if key == readchar.key.DOWN:
+    if key == readchar.key.DOWN or key == readchar.key.CTRL_N:
         return 'down'
 
     # Enter/Returnキー
@@ -781,7 +783,9 @@ def init(
         specify init my-project --ai windsurf
         specify init my-project --ai auggie
         specify init --ignore-agent-tools my-project
-        specify init --here --ai claude
+        specify init . --ai claude         # Initialize in current directory
+        specify init .                     # Initialize in current directory (interactive AI selection)
+        specify init --here --ai claude    # Alternative syntax for current directory
         specify init --here --ai codex
         specify init --here
         specify init --here --force  # 現在のディレクトリが空でない場合の確認をスキップ
@@ -789,6 +793,11 @@ def init(
     # Show banner first
     show_banner()
     
+    # Handle '.' as shorthand for current directory (equivalent to --here)
+    if project_name == ".":
+        here = True
+        project_name = None  # Clear project_name to use existing validation logic
+
     # Validate arguments
     if here and project_name:
         console.print("[red]エラー:[/red] プロジェクト名と--hereフラグを両方指定することはできません")
@@ -1069,6 +1078,16 @@ def init(
     steps_panel = Panel("\n".join(steps_lines), title="次のステップ", border_style="cyan", padding=(1,2))
     console.print()
     console.print(steps_panel)
+
+    enhancement_lines = [
+        "Optional commands that you can use for your specs [bright_black](improve quality & confidence)[/bright_black]",
+        "",
+        f"○ [cyan]/clarify[/] [bright_black](optional)[/bright_black] - Ask structured questions to de-risk ambiguous areas before planning (run before [cyan]/plan[/] if used)",
+        f"○ [cyan]/analyze[/] [bright_black](optional)[/bright_black] - Cross-artifact consistency & alignment report (after [cyan]/tasks[/], before [cyan]/implement[/])"
+    ]
+    enhancements_panel = Panel("\n".join(enhancement_lines), title="Enhancement Commands", border_style="cyan", padding=(1,2))
+    console.print()
+    console.print(enhancements_panel)
 
     if selected_ai == "codex":
         warning_text = """[bold yellow]重要な注意:[/bold yellow]
