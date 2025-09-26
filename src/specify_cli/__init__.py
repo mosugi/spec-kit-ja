@@ -10,15 +10,15 @@
 # ]
 # ///
 """
-Specify CLI - Setup tool for Specify projects
+Specify CLI - Specifyプロジェクトのセットアップツール
 
-Usage:
-    uvx specify-cli.py init <project-name>
+使用方法:
+    uvx specify-cli.py init <プロジェクト名>
     uvx specify-cli.py init --here
 
-Or install globally:
+またはグローバルインストール:
     uv tool install --from specify-cli.py specify-cli
-    specify init <project-name>
+    specify init <プロジェクト名>
     specify init --here
 """
 
@@ -54,15 +54,15 @@ ssl_context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 client = httpx.Client(verify=ssl_context)
 
 def _github_token(cli_token: str | None = None) -> str | None:
-    """Return sanitized GitHub token (cli arg takes precedence) or None."""
+    """サニタイズされたGitHubトークンを返す（CLIの引数が優先）またはNone。"""
     return ((cli_token or os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN") or "").strip()) or None
 
 def _github_auth_headers(cli_token: str | None = None) -> dict:
-    """Return Authorization header dict only when a non-empty token exists."""
+    """空でないトークンが存在する場合のみ、AuthorizationヘッダーのディクショナリーAを返す。"""
     token = _github_token(cli_token)
     return {"Authorization": f"Bearer {token}"} if token else {}
 
-# Constants
+# 定数
 AI_CHOICES = {
     "copilot": "GitHub Copilot",
     "claude": "Claude Code",
@@ -76,13 +76,13 @@ AI_CHOICES = {
     "auggie": "Auggie CLI",
     "roo": "Roo Code",
 }
-# Add script type choices
+# スクリプトタイプの選択肢を追加
 SCRIPT_TYPE_CHOICES = {"sh": "POSIX Shell (bash/zsh)", "ps": "PowerShell"}
 
-# Claude CLI local installation path after migrate-installer
+# migrate-installer後のClaude CLIのローカルインストールパス
 CLAUDE_LOCAL_PATH = Path.home() / ".claude" / "local" / "claude"
 
-# ASCII Art Banner
+# ASCIIアートバナー
 BANNER = """
 ███████╗██████╗ ███████╗ ██████╗██╗███████╗██╗   ██╗
 ██╔════╝██╔══██╗██╔════╝██╔════╝██║██╔════╝╚██╗ ██╔╝
@@ -92,10 +92,10 @@ BANNER = """
 ╚══════╝╚═╝     ╚══════╝ ╚═════╝╚═╝╚═╝        ╚═╝   
 """
 
-TAGLINE = "GitHub Spec Kit - Spec-Driven Development Toolkit"
+TAGLINE = "GitHub Spec Kit - 仕様駆動開発ツールキット"
 class StepTracker:
-    """Track and render hierarchical steps without emojis, similar to Claude Code tree output.
-    Supports live auto-refresh via an attached refresh callback.
+    """絵文字なしで階層的なステップを追跡および表示。Claude Codeツリー出力と同様。
+    アタッチされたリフレッシュコールバックによるライブ自動更新をサポート。
     """
     def __init__(self, title: str):
         self.title = title
@@ -188,23 +188,23 @@ MINI_BANNER = """
 """
 
 def get_key():
-    """Get a single keypress in a cross-platform way using readchar."""
+    """クロスプラットフォームでreadcharを使用して単一のキー入力を取得。"""
     key = readchar.readkey()
-    
-    # Arrow keys
+
+    # 矢印キー
     if key == readchar.key.UP:
         return 'up'
     if key == readchar.key.DOWN:
         return 'down'
-    
-    # Enter/Return
+
+    # Enter/Returnキー
     if key == readchar.key.ENTER:
         return 'enter'
-    
-    # Escape
+
+    # Escapeキー
     if key == readchar.key.ESC:
         return 'escape'
-        
+
     # Ctrl+C
     if key == readchar.key.CTRL_C:
         raise KeyboardInterrupt
@@ -215,15 +215,15 @@ def get_key():
 
 def select_with_arrows(options: dict, prompt_text: str = "Select an option", default_key: str = None) -> str:
     """
-    Interactive selection using arrow keys with Rich Live display.
-    
+    Rich Live表示と矢印キーを使用したインタラクティブ選択。
+
     Args:
-        options: Dict with keys as option keys and values as descriptions
-        prompt_text: Text to show above the options
-        default_key: Default option key to start with
-        
+        options: オプションキーと説明のディクショナリ
+        prompt_text: オプションの上に表示するテキスト
+        default_key: デフォルトのオプションキー
+
     Returns:
-        Selected option key
+        選択されたオプションキー
     """
     option_keys = list(options.keys())
     if default_key and default_key in option_keys:
@@ -234,7 +234,7 @@ def select_with_arrows(options: dict, prompt_text: str = "Select an option", def
     selected_key = None
 
     def create_selection_panel():
-        """Create the selection panel with current selection highlighted."""
+        """現在の選択がハイライトされた選択パネルを作成。"""
         table = Table.grid(padding=(0, 2))
         table.add_column(style="cyan", justify="left", width=3)
         table.add_column(style="white", justify="left")
@@ -246,7 +246,7 @@ def select_with_arrows(options: dict, prompt_text: str = "Select an option", def
                 table.add_row(" ", f"[cyan]{key}[/cyan] [dim]({options[key]})[/dim]")
         
         table.add_row("", "")
-        table.add_row("", "[dim]Use ↑/↓ to navigate, Enter to select, Esc to cancel[/dim]")
+        table.add_row("", "[dim]↑/↓でナビゲート、Enterで選択、Escでキャンセル[/dim]")
         
         return Panel(
             table,
@@ -271,22 +271,22 @@ def select_with_arrows(options: dict, prompt_text: str = "Select an option", def
                         selected_key = option_keys[selected_index]
                         break
                     elif key == 'escape':
-                        console.print("\n[yellow]Selection cancelled[/yellow]")
+                        console.print("\n[yellow]選択がキャンセルされました[/yellow]")
                         raise typer.Exit(1)
                     
                     live.update(create_selection_panel(), refresh=True)
 
                 except KeyboardInterrupt:
-                    console.print("\n[yellow]Selection cancelled[/yellow]")
+                    console.print("\n[yellow]選択がキャンセルされました[/yellow]")
                     raise typer.Exit(1)
 
     run_selection_loop()
 
     if selected_key is None:
-        console.print("\n[red]Selection failed.[/red]")
+        console.print("\n[red]選択が失敗しました。[/red]")
         raise typer.Exit(1)
 
-    # Suppress explicit selection print; tracker / later logic will report consolidated status
+    # 明示的な選択の出力を抑制; トラッカー/後続ロジックが統合ステータスを報告
     return selected_key
 
 
@@ -295,17 +295,17 @@ console = Console()
 
 
 class BannerGroup(TyperGroup):
-    """Custom group that shows banner before help."""
-    
+    """ヘルプの前にバナーを表示するカスタムグループ。"""
+
     def format_help(self, ctx, formatter):
-        # Show banner before help
+        # ヘルプの前にバナーを表示
         show_banner()
         super().format_help(ctx, formatter)
 
 
 app = typer.Typer(
     name="specify",
-    help="Setup tool for Specify spec-driven development projects",
+    help="Specify仕様駆動開発プロジェクトのセットアップツール",
     add_completion=False,
     invoke_without_command=True,
     cls=BannerGroup,
@@ -313,8 +313,8 @@ app = typer.Typer(
 
 
 def show_banner():
-    """Display the ASCII art banner."""
-    # Create gradient effect with different colors
+    """ASCIIアートバナーを表示。"""
+    # 異なる色でグラデーション効果を作成
     banner_lines = BANNER.strip().split('\n')
     colors = ["bright_blue", "blue", "cyan", "bright_cyan", "white", "bright_white"]
     
@@ -330,17 +330,17 @@ def show_banner():
 
 @app.callback()
 def callback(ctx: typer.Context):
-    """Show banner when no subcommand is provided."""
-    # Show banner only when no subcommand and no help flag
-    # (help is handled by BannerGroup)
+    """サブコマンドが指定されていない場合にバナーを表示。"""
+    # サブコマンドとヘルプフラグがない場合のみバナーを表示
+    # (ヘルプはBannerGroupによって処理される)
     if ctx.invoked_subcommand is None and "--help" not in sys.argv and "-h" not in sys.argv:
         show_banner()
-        console.print(Align.center("[dim]Run 'specify --help' for usage information[/dim]"))
+        console.print(Align.center("[dim]'specify --help' で使用方法を確認[/dim]"))
         console.print()
 
 
 def run_command(cmd: list[str], check_return: bool = True, capture: bool = False, shell: bool = False) -> Optional[str]:
-    """Run a shell command and optionally capture output."""
+    """シェルコマンドを実行し、オプションで出力をキャプチャ。"""
     try:
         if capture:
             result = subprocess.run(cmd, check=check_return, capture_output=True, text=True, shell=shell)
@@ -350,32 +350,32 @@ def run_command(cmd: list[str], check_return: bool = True, capture: bool = False
             return None
     except subprocess.CalledProcessError as e:
         if check_return:
-            console.print(f"[red]Error running command:[/red] {' '.join(cmd)}")
-            console.print(f"[red]Exit code:[/red] {e.returncode}")
+            console.print(f"[red]コマンド実行エラー:[/red] {' '.join(cmd)}")
+            console.print(f"[red]終了コード:[/red] {e.returncode}")
             if hasattr(e, 'stderr') and e.stderr:
-                console.print(f"[red]Error output:[/red] {e.stderr}")
+                console.print(f"[red]エラー出力:[/red] {e.stderr}")
             raise
         return None
 
 
 def check_tool_for_tracker(tool: str, tracker: StepTracker) -> bool:
-    """Check if a tool is installed and update tracker."""
+    """ツールがインストールされているかチェックしてトラッカーを更新。"""
     if shutil.which(tool):
-        tracker.complete(tool, "available")
+        tracker.complete(tool, "利用可能")
         return True
     else:
-        tracker.error(tool, "not found")
+        tracker.error(tool, "見つかりません")
         return False
 
 
 def check_tool(tool: str, install_hint: str) -> bool:
-    """Check if a tool is installed."""
-    
-    # Special handling for Claude CLI after `claude migrate-installer`
-    # See: https://github.com/github/spec-kit/issues/123
-    # The migrate-installer command REMOVES the original executable from PATH
-    # and creates an alias at ~/.claude/local/claude instead
-    # This path should be prioritized over other claude executables in PATH
+    """ツールがインストールされているか確認。"""
+
+    # `claude migrate-installer`後のClaude CLIの特別な処理
+    # 参照: https://github.com/github/spec-kit/issues/123
+    # migrate-installerコマンドはPATHから元の実行ファイルを削除し
+    # 代わりに~/.claude/local/claudeにエイリアスを作成する
+    # このパスはPATH内の他のclaude実行ファイルより優先されるべき
     if tool == "claude":
         if CLAUDE_LOCAL_PATH.exists() and CLAUDE_LOCAL_PATH.is_file():
             return True
@@ -387,15 +387,15 @@ def check_tool(tool: str, install_hint: str) -> bool:
 
 
 def is_git_repo(path: Path = None) -> bool:
-    """Check if the specified path is inside a git repository."""
+    """指定されたパスがgitリポジトリ内にあるかチェック。"""
     if path is None:
         path = Path.cwd()
-    
+
     if not path.is_dir():
         return False
 
     try:
-        # Use git command to check if inside a work tree
+        # gitコマンドを使用してワークツリー内にあるかチェック
         subprocess.run(
             ["git", "rev-parse", "--is-inside-work-tree"],
             check=True,
@@ -408,24 +408,24 @@ def is_git_repo(path: Path = None) -> bool:
 
 
 def init_git_repo(project_path: Path, quiet: bool = False) -> bool:
-    """Initialize a git repository in the specified path.
-    quiet: if True suppress console output (tracker handles status)
+    """指定されたパスにgitリポジトリを初期化。
+    quiet: Trueの場合コンソール出力を抑制（トラッカーがステータスを処理）
     """
     try:
         original_cwd = Path.cwd()
         os.chdir(project_path)
         if not quiet:
-            console.print("[cyan]Initializing git repository...[/cyan]")
+            console.print("[cyan]gitリポジトリを初期化中...[/cyan]")
         subprocess.run(["git", "init"], check=True, capture_output=True)
         subprocess.run(["git", "add", "."], check=True, capture_output=True)
-        subprocess.run(["git", "commit", "-m", "Initial commit from Specify template"], check=True, capture_output=True)
+        subprocess.run(["git", "commit", "-m", "Specifyテンプレートからの初期コミット"], check=True, capture_output=True)
         if not quiet:
-            console.print("[green]✓[/green] Git repository initialized")
+            console.print("[green]✓[/green] gitリポジトリが初期化されました")
         return True
         
     except subprocess.CalledProcessError as e:
         if not quiet:
-            console.print(f"[red]Error initializing git repository:[/red] {e}")
+            console.print(f"[red]gitリポジトリ初期化エラー:[/red] {e}")
         return False
     finally:
         os.chdir(original_cwd)
@@ -438,7 +438,7 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
         client = httpx.Client(verify=ssl_context)
     
     if verbose:
-        console.print(f"[cyan]Fetching latest release information from {repo_owner}/{repo_name}...[/cyan]")
+        console.print(f"[cyan]{repo_owner}/{repo_name}から最新リリース情報を取得中...[/cyan]")
     api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest"
     
     try:
@@ -450,20 +450,20 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
         )
         status = response.status_code
         if status != 200:
-            msg = f"GitHub API returned {status} for {api_url}"
+            msg = f"GitHub APIが{status}を返しました: {api_url}"
             if debug:
                 msg += f"\nResponse headers: {response.headers}\nBody (truncated 500): {response.text[:500]}"
             raise RuntimeError(msg)
         try:
             release_data = response.json()
         except ValueError as je:
-            raise RuntimeError(f"Failed to parse release JSON: {je}\nRaw (truncated 400): {response.text[:400]}")
+            raise RuntimeError(f"リリースJSONのパースに失敗: {je}\nRaw (truncated 400): {response.text[:400]}")
     except Exception as e:
-        console.print(f"[red]Error fetching release information[/red]")
-        console.print(Panel(str(e), title="Fetch Error", border_style="red"))
+        console.print(f"[red]リリース情報の取得エラー[/red]")
+        console.print(Panel(str(e), title="取得エラー", border_style="red"))
         raise typer.Exit(1)
     
-    # Find the template asset for the specified AI assistant
+    # 指定されたAIアシスタント用のテンプレートアセットを検索
     assets = release_data.get("assets", [])
     pattern = f"spec-kit-template-{ai_assistant}-{script_type}"
     matching_assets = [
@@ -474,9 +474,9 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
     asset = matching_assets[0] if matching_assets else None
 
     if asset is None:
-        console.print(f"[red]No matching release asset found[/red] for [bold]{ai_assistant}[/bold] (expected pattern: [bold]{pattern}[/bold])")
+        console.print(f"[red]一致するリリースアセットが見つかりません[/red] 対象: [bold]{ai_assistant}[/bold] (期待パターン: [bold]{pattern}[/bold])")
         asset_names = [a.get('name', '?') for a in assets]
-        console.print(Panel("\n".join(asset_names) or "(no assets)", title="Available Assets", border_style="yellow"))
+        console.print(Panel("\n".join(asset_names) or "(アセットなし)", title="利用可能なアセット", border_style="yellow"))
         raise typer.Exit(1)
 
     download_url = asset["browser_download_url"]
@@ -484,13 +484,13 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
     file_size = asset["size"]
     
     if verbose:
-        console.print(f"[cyan]Found template:[/cyan] {filename}")
-        console.print(f"[cyan]Size:[/cyan] {file_size:,} bytes")
-        console.print(f"[cyan]Release:[/cyan] {release_data['tag_name']}")
+        console.print(f"[cyan]テンプレートを発見:[/cyan] {filename}")
+        console.print(f"[cyan]サイズ:[/cyan] {file_size:,} バイト")
+        console.print(f"[cyan]リリース:[/cyan] {release_data['tag_name']}")
 
     zip_path = download_dir / filename
     if verbose:
-        console.print(f"[cyan]Downloading template...[/cyan]")
+        console.print(f"[cyan]テンプレートをダウンロード中...[/cyan]")
     
     try:
         with client.stream(
@@ -526,11 +526,11 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
                         for chunk in response.iter_bytes(chunk_size=8192):
                             f.write(chunk)
     except Exception as e:
-        console.print(f"[red]Error downloading template[/red]")
+        console.print(f"[red]テンプレートのダウンロードエラー[/red]")
         detail = str(e)
         if zip_path.exists():
             zip_path.unlink()
-        console.print(Panel(detail, title="Download Error", border_style="red"))
+        console.print(Panel(detail, title="ダウンロードエラー", border_style="red"))
         raise typer.Exit(1)
     if verbose:
         console.print(f"Downloaded: {filename}")
@@ -551,7 +551,7 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
     
     # Step: fetch + download combined
     if tracker:
-        tracker.start("fetch", "contacting GitHub API")
+        tracker.start("fetch", "GitHub APIに接続中")
     try:
         zip_path, meta = download_template_from_github(
             ai_assistant,
@@ -564,7 +564,7 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
             github_token=github_token
         )
         if tracker:
-            tracker.complete("fetch", f"release {meta['release']} ({meta['size']:,} bytes)")
+            tracker.complete("fetch", f"リリース {meta['release']} ({meta['size']:,} バイト)")
             tracker.add("download", "Download template")
             tracker.complete("download", meta['filename'])
     except Exception as e:
@@ -572,7 +572,7 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
             tracker.error("fetch", str(e))
         else:
             if verbose:
-                console.print(f"[red]Error downloading template:[/red] {e}")
+                console.print(f"[red]テンプレートのダウンロードエラー:[/red] {e}")
         raise
     
     if tracker:
@@ -591,9 +591,9 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
             zip_contents = zip_ref.namelist()
             if tracker:
                 tracker.start("zip-list")
-                tracker.complete("zip-list", f"{len(zip_contents)} entries")
+                tracker.complete("zip-list", f"{len(zip_contents)}個のエントリ")
             elif verbose:
-                console.print(f"[cyan]ZIP contains {len(zip_contents)} items[/cyan]")
+                console.print(f"[cyan]ZIPに{len(zip_contents)}個のアイテムが含まれています[/cyan]")
             
             # For current directory, extract to a temp location first
             if is_current_dir:
@@ -605,9 +605,9 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                     extracted_items = list(temp_path.iterdir())
                     if tracker:
                         tracker.start("extracted-summary")
-                        tracker.complete("extracted-summary", f"temp {len(extracted_items)} items")
+                        tracker.complete("extracted-summary", f"一時 {len(extracted_items)}個のアイテム")
                     elif verbose:
-                        console.print(f"[cyan]Extracted {len(extracted_items)} items to temp location[/cyan]")
+                        console.print(f"[cyan]{len(extracted_items)}個のアイテムを一時場所に展開しました[/cyan]")
                     
                     # Handle GitHub-style ZIP with a single root directory
                     source_dir = temp_path
@@ -617,7 +617,7 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                             tracker.add("flatten", "Flatten nested directory")
                             tracker.complete("flatten")
                         elif verbose:
-                            console.print(f"[cyan]Found nested directory structure[/cyan]")
+                            console.print(f"[cyan]ネストされたディレクトリ構造を発見[/cyan]")
                     
                     # Copy contents to current directory
                     for item in source_dir.iterdir():
@@ -625,7 +625,7 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                         if item.is_dir():
                             if dest_path.exists():
                                 if verbose and not tracker:
-                                    console.print(f"[yellow]Merging directory:[/yellow] {item.name}")
+                                    console.print(f"[yellow]ディレクトリをマージ中:[/yellow] {item.name}")
                                 # Recursively copy directory contents
                                 for sub_item in item.rglob('*'):
                                     if sub_item.is_file():
@@ -637,10 +637,10 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                                 shutil.copytree(item, dest_path)
                         else:
                             if dest_path.exists() and verbose and not tracker:
-                                console.print(f"[yellow]Overwriting file:[/yellow] {item.name}")
+                                console.print(f"[yellow]ファイルを上書き:[/yellow] {item.name}")
                             shutil.copy2(item, dest_path)
                     if verbose and not tracker:
-                        console.print(f"[cyan]Template files merged into current directory[/cyan]")
+                        console.print(f"[cyan]テンプレートファイルを現在のディレクトリにマージしました[/cyan]")
             else:
                 # Extract directly to project directory (original behavior)
                 zip_ref.extractall(project_path)
@@ -649,9 +649,9 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                 extracted_items = list(project_path.iterdir())
                 if tracker:
                     tracker.start("extracted-summary")
-                    tracker.complete("extracted-summary", f"{len(extracted_items)} top-level items")
+                    tracker.complete("extracted-summary", f"{len(extracted_items)}個のトップレベルアイテム")
                 elif verbose:
-                    console.print(f"[cyan]Extracted {len(extracted_items)} items to {project_path}:[/cyan]")
+                    console.print(f"[cyan]{len(extracted_items)}個のアイテムを{project_path}に展開:[/cyan]")
                     for item in extracted_items:
                         console.print(f"  - {item.name} ({'dir' if item.is_dir() else 'file'})")
                 
@@ -670,16 +670,16 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                         tracker.add("flatten", "Flatten nested directory")
                         tracker.complete("flatten")
                     elif verbose:
-                        console.print(f"[cyan]Flattened nested directory structure[/cyan]")
+                        console.print(f"[cyan]ネストされたディレクトリ構造をフラット化しました[/cyan]")
                     
     except Exception as e:
         if tracker:
             tracker.error("extract", str(e))
         else:
             if verbose:
-                console.print(f"[red]Error extracting template:[/red] {e}")
+                console.print(f"[red]テンプレートの展開エラー:[/red] {e}")
                 if debug:
-                    console.print(Panel(str(e), title="Extraction Error", border_style="red"))
+                    console.print(Panel(str(e), title="展開エラー", border_style="red"))
         # Clean up project directory if created and not current directory
         if not is_current_dir and project_path.exists():
             shutil.rmtree(project_path)
@@ -739,37 +739,37 @@ def ensure_executable_scripts(project_path: Path, tracker: StepTracker | None = 
         (tracker.error if failures else tracker.complete)("chmod", detail)
     else:
         if updated:
-            console.print(f"[cyan]Updated execute permissions on {updated} script(s) recursively[/cyan]")
+            console.print(f"[cyan]{updated}個のスクリプトの実行権限を再帰的に更新しました[/cyan]")
         if failures:
-            console.print("[yellow]Some scripts could not be updated:[/yellow]")
+            console.print("[yellow]一部のスクリプトを更新できませんでした:[/yellow]")
             for f in failures:
                 console.print(f"  - {f}")
 
 @app.command()
 def init(
-    project_name: str = typer.Argument(None, help="Name for your new project directory (optional if using --here)"),
-    ai_assistant: str = typer.Option(None, "--ai", help="AI assistant to use: claude, gemini, copilot, cursor, qwen, opencode, codex, windsurf, kilocode, or auggie"),
-    script_type: str = typer.Option(None, "--script", help="Script type to use: sh or ps"),
-    ignore_agent_tools: bool = typer.Option(False, "--ignore-agent-tools", help="Skip checks for AI agent tools like Claude Code"),
-    no_git: bool = typer.Option(False, "--no-git", help="Skip git repository initialization"),
-    here: bool = typer.Option(False, "--here", help="Initialize project in the current directory instead of creating a new one"),
-    force: bool = typer.Option(False, "--force", help="Force merge/overwrite when using --here (skip confirmation)"),
-    skip_tls: bool = typer.Option(False, "--skip-tls", help="Skip SSL/TLS verification (not recommended)"),
-    debug: bool = typer.Option(False, "--debug", help="Show verbose diagnostic output for network and extraction failures"),
-    github_token: str = typer.Option(None, "--github-token", help="GitHub token to use for API requests (or set GH_TOKEN or GITHUB_TOKEN environment variable)"),
+    project_name: str = typer.Argument(None, help="新しいプロジェクトディレクトリ名 (--here使用時はオプション)"),
+    ai_assistant: str = typer.Option(None, "--ai", help="使用するAIアシスタント: claude, gemini, copilot, cursor, qwen, opencode, codex, windsurf, kilocode, またはauggie"),
+    script_type: str = typer.Option(None, "--script", help="使用するスクリプトタイプ: sh または ps"),
+    ignore_agent_tools: bool = typer.Option(False, "--ignore-agent-tools", help="Claude CodeなどのAIエージェントツールのチェックをスキップ"),
+    no_git: bool = typer.Option(False, "--no-git", help="gitリポジトリの初期化をスキップ"),
+    here: bool = typer.Option(False, "--here", help="新しいディレクトリを作成せず、現在のディレクトリでプロジェクトを初期化"),
+    force: bool = typer.Option(False, "--force", help="--here使用時に強制的にマージ/上書き(確認をスキップ)"),
+    skip_tls: bool = typer.Option(False, "--skip-tls", help="SSL/TLS検証をスキップ(非推奨)"),
+    debug: bool = typer.Option(False, "--debug", help="ネットワークと抽出失敗時の詳細な診断出力を表示"),
+    github_token: str = typer.Option(None, "--github-token", help="APIリクエストで使用するGitHubトークン (またはGH_TOKENやGITHUB_TOKEN環境変数を設定)"),
 ):
     """
-    Initialize a new Specify project from the latest template.
-    
-    This command will:
-    1. Check that required tools are installed (git is optional)
-    2. Let you choose your AI assistant (Claude Code, Gemini CLI, GitHub Copilot, Cursor, Qwen Code, opencode, Codex CLI, Windsurf, Kilo Code, or Auggie CLI)
-    3. Download the appropriate template from GitHub
-    4. Extract the template to a new project directory or current directory
-    5. Initialize a fresh git repository (if not --no-git and no existing repo)
-    6. Optionally set up AI assistant commands
-    
-    Examples:
+    最新のテンプレートから新しいSpecifyプロジェクトを初期化。
+
+    このコマンドは以下を実行します:
+    1. 必要なツールがインストールされているか確認 (gitはオプション)
+    2. AIアシスタントを選択 (Claude Code, Gemini CLI, GitHub Copilot, Cursor, Qwen Code, opencode, Codex CLI, Windsurf, Kilo Code, またはAuggie CLI)
+    3. GitHubから適切なテンプレートをダウンロード
+    4. テンプレートを新しいプロジェクトディレクトリまたは現在のディレクトリに展開
+    5. 新しいgitリポジトリを初期化 (--no-gitでなく、既存のリポジトリがない場合)
+    6. オプションでAIアシスタントコマンドをセットアップ
+
+    例:
         specify init my-project
         specify init my-project --ai claude
         specify init my-project --ai gemini
@@ -784,18 +784,18 @@ def init(
         specify init --here --ai claude
         specify init --here --ai codex
         specify init --here
-        specify init --here --force  # Skip confirmation when current directory not empty
+        specify init --here --force  # 現在のディレクトリが空でない場合の確認をスキップ
     """
     # Show banner first
     show_banner()
     
     # Validate arguments
     if here and project_name:
-        console.print("[red]Error:[/red] Cannot specify both project name and --here flag")
+        console.print("[red]エラー:[/red] プロジェクト名と--hereフラグを両方指定することはできません")
         raise typer.Exit(1)
     
     if not here and not project_name:
-        console.print("[red]Error:[/red] Must specify either a project name or use --here flag")
+        console.print("[red]エラー:[/red] プロジェクト名を指定するか、--hereフラグを使用してください")
         raise typer.Exit(1)
     
     # Determine project directory
@@ -806,24 +806,24 @@ def init(
         # Check if current directory has any files
         existing_items = list(project_path.iterdir())
         if existing_items:
-            console.print(f"[yellow]Warning:[/yellow] Current directory is not empty ({len(existing_items)} items)")
-            console.print("[yellow]Template files will be merged with existing content and may overwrite existing files[/yellow]")
+            console.print(f"[yellow]警告:[/yellow] 現在のディレクトリは空ではありません ({len(existing_items)}個のアイテム)")
+            console.print("[yellow]テンプレートファイルは既存の内容とマージされ、既存のファイルを上書きする可能性があります[/yellow]")
             if force:
-                console.print("[cyan]--force supplied: skipping confirmation and proceeding with merge[/cyan]")
+                console.print("[cyan]--forceが指定されました: 確認をスキップしてマージを実行します[/cyan]")
             else:
                 # Ask for confirmation
                 response = typer.confirm("Do you want to continue?")
                 if not response:
-                    console.print("[yellow]Operation cancelled[/yellow]")
+                    console.print("[yellow]操作がキャンセルされました[/yellow]")
                     raise typer.Exit(0)
     else:
         project_path = Path(project_name).resolve()
         # Check if project directory already exists
         if project_path.exists():
             error_panel = Panel(
-                f"Directory '[cyan]{project_name}[/cyan]' already exists\n"
-                "Please choose a different project name or remove the existing directory.",
-                title="[red]Directory Conflict[/red]",
+                f"ディレクトリ '[cyan]{project_name}[/cyan]' は既に存在します\n"
+                "別のプロジェクト名を選択するか、既存のディレクトリを削除してください。",
+                title="[red]ディレクトリの競合[/red]",
                 border_style="red",
                 padding=(1, 2)
             )
@@ -835,15 +835,15 @@ def init(
     current_dir = Path.cwd()
     
     setup_lines = [
-        "[cyan]Specify Project Setup[/cyan]",
+        "[cyan]Specifyプロジェクトのセットアップ[/cyan]",
         "",
-        f"{'Project':<15} [green]{project_path.name}[/green]",
-        f"{'Working Path':<15} [dim]{current_dir}[/dim]",
+        f"{'プロジェクト':<15} [green]{project_path.name}[/green]",
+        f"{'作業パス':<15} [dim]{current_dir}[/dim]",
     ]
     
     # Add target path only if different from working dir
     if not here:
-        setup_lines.append(f"{'Target Path':<15} [dim]{project_path}[/dim]")
+        setup_lines.append(f"{'対象パス':<15} [dim]{project_path}[/dim]")
     
     console.print(Panel("\n".join(setup_lines), border_style="cyan", padding=(1, 2)))
     
@@ -853,19 +853,19 @@ def init(
     if not no_git:
         should_init_git = check_tool("git", "https://git-scm.com/downloads")
         if not should_init_git:
-            console.print("[yellow]Git not found - will skip repository initialization[/yellow]")
+            console.print("[yellow]Gitが見つかりません - リポジトリの初期化をスキップします[/yellow]")
 
     # AI assistant selection
     if ai_assistant:
         if ai_assistant not in AI_CHOICES:
-            console.print(f"[red]Error:[/red] Invalid AI assistant '{ai_assistant}'. Choose from: {', '.join(AI_CHOICES.keys())}")
+            console.print(f"[red]エラー:[/red] 無効なAIアシスタント '{ai_assistant}'。以下から選択: {', '.join(AI_CHOICES.keys())}")
             raise typer.Exit(1)
         selected_ai = ai_assistant
     else:
-        # Use arrow-key selection interface
+        # 矢印キー選択インターフェースを使用
         selected_ai = select_with_arrows(
-            AI_CHOICES, 
-            "Choose your AI assistant:", 
+            AI_CHOICES,
+            "AIアシスタントを選択:",
             "copilot"
         )
     
@@ -901,11 +901,11 @@ def init(
 
         if agent_tool_missing:
             error_panel = Panel(
-                f"[cyan]{selected_ai}[/cyan] not found\n"
-                f"Install with: [cyan]{install_url}[/cyan]\n"
-                f"{AI_CHOICES[selected_ai]} is required to continue with this project type.\n\n"
-                "Tip: Use [cyan]--ignore-agent-tools[/cyan] to skip this check",
-                title="[red]Agent Detection Error[/red]",
+                f"[cyan]{selected_ai}[/cyan] が見つかりません\n"
+                f"インストール: [cyan]{install_url}[/cyan]\n"
+                f"{AI_CHOICES[selected_ai]}はこのプロジェクトタイプを続行するために必要です。\n\n"
+                "ヒント: [cyan]--ignore-agent-tools[/cyan]を使用してこのチェックをスキップ",
+                title="[red]エージェント検出エラー[/red]",
                 border_style="red",
                 padding=(1, 2)
             )
@@ -916,7 +916,7 @@ def init(
     # Determine script type (explicit, interactive, or OS default)
     if script_type:
         if script_type not in SCRIPT_TYPE_CHOICES:
-            console.print(f"[red]Error:[/red] Invalid script type '{script_type}'. Choose from: {', '.join(SCRIPT_TYPE_CHOICES.keys())}")
+            console.print(f"[red]エラー:[/red] 無効なスクリプトタイプ '{script_type}'。以下から選択: {', '.join(SCRIPT_TYPE_CHOICES.keys())}")
             raise typer.Exit(1)
         selected_script = script_type
     else:
@@ -924,35 +924,35 @@ def init(
         default_script = "ps" if os.name == "nt" else "sh"
         # Provide interactive selection similar to AI if stdin is a TTY
         if sys.stdin.isatty():
-            selected_script = select_with_arrows(SCRIPT_TYPE_CHOICES, "Choose script type (or press Enter)", default_script)
+            selected_script = select_with_arrows(SCRIPT_TYPE_CHOICES, "スクリプトタイプを選択 (またはEnterキー)", default_script)
         else:
             selected_script = default_script
     
-    console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
-    console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
+    console.print(f"[cyan]選択されたAIアシスタント:[/cyan] {selected_ai}")
+    console.print(f"[cyan]選択されたスクリプトタイプ:[/cyan] {selected_script}")
     
     # Download and set up project
     # New tree-based progress (no emojis); include earlier substeps
-    tracker = StepTracker("Initialize Specify Project")
+    tracker = StepTracker("Specifyプロジェクトの初期化")
     # Flag to allow suppressing legacy headings
     sys._specify_tracker_active = True
     # Pre steps recorded as completed before live rendering
-    tracker.add("precheck", "Check required tools")
+    tracker.add("precheck", "必要なツールの確認")
     tracker.complete("precheck", "ok")
-    tracker.add("ai-select", "Select AI assistant")
+    tracker.add("ai-select", "AIアシスタントの選択")
     tracker.complete("ai-select", f"{selected_ai}")
-    tracker.add("script-select", "Select script type")
+    tracker.add("script-select", "スクリプトタイプの選択")
     tracker.complete("script-select", selected_script)
     for key, label in [
-        ("fetch", "Fetch latest release"),
-        ("download", "Download template"),
-        ("extract", "Extract template"),
-        ("zip-list", "Archive contents"),
-        ("extracted-summary", "Extraction summary"),
-        ("chmod", "Ensure scripts executable"),
-        ("cleanup", "Cleanup"),
-        ("git", "Initialize git repository"),
-        ("final", "Finalize")
+        ("fetch", "最新リリースの取得"),
+        ("download", "テンプレートのダウンロード"),
+        ("extract", "テンプレートの展開"),
+        ("zip-list", "アーカイブの内容"),
+        ("extracted-summary", "展開サマリー"),
+        ("chmod", "スクリプトの実行可能化"),
+        ("cleanup", "クリーンアップ"),
+        ("git", "gitリポジトリの初期化"),
+        ("final", "完了")
     ]:
         tracker.add(key, label)
 
@@ -974,21 +974,21 @@ def init(
             if not no_git:
                 tracker.start("git")
                 if is_git_repo(project_path):
-                    tracker.complete("git", "existing repo detected")
+                    tracker.complete("git", "既存のリポジトリを検出")
                 elif should_init_git:
                     if init_git_repo(project_path, quiet=True):
-                        tracker.complete("git", "initialized")
+                        tracker.complete("git", "初期化完了")
                     else:
-                        tracker.error("git", "init failed")
+                        tracker.error("git", "初期化失敗")
                 else:
-                    tracker.skip("git", "git not available")
+                    tracker.skip("git", "gitが利用不可")
             else:
-                tracker.skip("git", "--no-git flag")
+                tracker.skip("git", "--no-gitフラグ")
 
-            tracker.complete("final", "project ready")
+            tracker.complete("final", "プロジェクト準備完了")
         except Exception as e:
             tracker.error("final", str(e))
-            console.print(Panel(f"Initialization failed: {e}", title="Failure", border_style="red"))
+            console.print(Panel(f"初期化に失敗しました: {e}", title="失敗", border_style="red"))
             if debug:
                 _env_pairs = [
                     ("Python", sys.version.split()[0]),
@@ -997,7 +997,7 @@ def init(
                 ]
                 _label_width = max(len(k) for k, _ in _env_pairs)
                 env_lines = [f"{k.ljust(_label_width)} → [bright_black]{v}[/bright_black]" for k, v in _env_pairs]
-                console.print(Panel("\n".join(env_lines), title="Debug Environment", border_style="magenta"))
+                console.print(Panel("\n".join(env_lines), title="デバッグ環境", border_style="magenta"))
             if not here and project_path.exists():
                 shutil.rmtree(project_path)
             raise typer.Exit(1)
@@ -1007,7 +1007,7 @@ def init(
 
     # Final static tree (ensures finished state visible after Live context ends)
     console.print(tracker.render())
-    console.print("\n[bold green]Project ready.[/bold green]")
+    console.print("\n[bold green]プロジェクトの準備が整いました。[/bold green]")
     
     # Agent folder security notice
     agent_folder_map = {
@@ -1027,9 +1027,9 @@ def init(
     if selected_ai in agent_folder_map:
         agent_folder = agent_folder_map[selected_ai]
         security_notice = Panel(
-            f"Some agents may store credentials, auth tokens, or other identifying and private artifacts in the agent folder within your project.\n"
-            f"Consider adding [cyan]{agent_folder}[/cyan] (or parts of it) to [cyan].gitignore[/cyan] to prevent accidental credential leakage.",
-            title="[yellow]Agent Folder Security[/yellow]",
+            f"一部のエージェントは、プロジェクト内のエージェントフォルダに資格情報、認証トークン、またはその他の識別情報やプライベートな成果物を保存する場合があります。\n"
+            f"偶発的な資格情報の漏洩を防ぐために、[cyan]{agent_folder}[/cyan]（またはその一部）を[cyan].gitignore[/cyan]に追加することを検討してください。",
+            title="[yellow]エージェントフォルダのセキュリティ[/yellow]",
             border_style="yellow",
             padding=(1, 2)
         )
@@ -1039,10 +1039,10 @@ def init(
     # Boxed "Next steps" section
     steps_lines = []
     if not here:
-        steps_lines.append(f"1. Go to the project folder: [cyan]cd {project_name}[/cyan]")
+        steps_lines.append(f"1. プロジェクトフォルダに移動: [cyan]cd {project_name}[/cyan]")
         step_num = 2
     else:
-        steps_lines.append("1. You're already in the project directory!")
+        steps_lines.append("1. 既にプロジェクトディレクトリにいます！")
         step_num = 2
 
     # Add Codex-specific setup step if needed
@@ -1054,48 +1054,48 @@ def init(
         else:  # Unix-like systems
             cmd = f"export CODEX_HOME={quoted_path}"
         
-        steps_lines.append(f"{step_num}. Set [cyan]CODEX_HOME[/cyan] environment variable before running Codex: [cyan]{cmd}[/cyan]")
+        steps_lines.append(f"{step_num}. Codex実行前に[cyan]CODEX_HOME[/cyan]環境変数を設定: [cyan]{cmd}[/cyan]")
         step_num += 1
 
-    steps_lines.append(f"{step_num}. Start using slash commands with your AI agent:")
-    steps_lines.append("   2.1 [cyan]/constitution[/] - Establish project principles")
-    steps_lines.append("   2.2 [cyan]/specify[/] - Create specifications")
-    steps_lines.append("   2.3 [cyan]/clarify[/] - Clarify and de-risk specification (run before [cyan]/plan[/cyan])")
-    steps_lines.append("   2.4 [cyan]/plan[/] - Create implementation plans")
-    steps_lines.append("   2.5 [cyan]/tasks[/] - Generate actionable tasks")
-    steps_lines.append("   2.6 [cyan]/analyze[/] - Validate alignment & surface inconsistencies (read-only)")
-    steps_lines.append("   2.7 [cyan]/implement[/] - Execute implementation")
+    steps_lines.append(f"{step_num}. AIエージェントでスラッシュコマンドを使い始める:")
+    steps_lines.append("   2.1 [cyan]/constitution[/] - プロジェクト原則の確立")
+    steps_lines.append("   2.2 [cyan]/specify[/] - 仕様の作成")
+    steps_lines.append("   2.3 [cyan]/clarify[/] - 仕様の明確化とリスク低減 ([cyan]/plan[/cyan]の前に実行)")
+    steps_lines.append("   2.4 [cyan]/plan[/] - 実装計画の作成")
+    steps_lines.append("   2.5 [cyan]/tasks[/] - アクショナブルなタスクの生成")
+    steps_lines.append("   2.6 [cyan]/analyze[/] - 整合性の検証と不一致の検出 (読み取り専用)")
+    steps_lines.append("   2.7 [cyan]/implement[/] - 実装の実行")
 
-    steps_panel = Panel("\n".join(steps_lines), title="Next Steps", border_style="cyan", padding=(1,2))
+    steps_panel = Panel("\n".join(steps_lines), title="次のステップ", border_style="cyan", padding=(1,2))
     console.print()
     console.print(steps_panel)
 
     if selected_ai == "codex":
-        warning_text = """[bold yellow]Important Note:[/bold yellow]
+        warning_text = """[bold yellow]重要な注意:[/bold yellow]
 
-Custom prompts do not yet support arguments in Codex. You may need to manually specify additional project instructions directly in prompt files located in [cyan].codex/prompts/[/cyan].
+Codexではカスタムプロンプトがまだ引数をサポートしていません。[cyan].codex/prompts/[/cyan]内のプロンプトファイルに追加のプロジェクト指示を直接指定する必要があるかもしれません。
 
-For more information, see: [cyan]https://github.com/openai/codex/issues/2890[/cyan]"""
+詳細情報: [cyan]https://github.com/openai/codex/issues/2890[/cyan]"""
         
-        warning_panel = Panel(warning_text, title="Slash Commands in Codex", border_style="yellow", padding=(1,2))
+        warning_panel = Panel(warning_text, title="Codexでのスラッシュコマンド", border_style="yellow", padding=(1,2))
         console.print()
         console.print(warning_panel)
 
 @app.command()
 def check():
-    """Check that all required tools are installed."""
+    """必要なツールがすべてインストールされているか確認。"""
     show_banner()
-    console.print("[bold]Checking for installed tools...[/bold]\n")
+    console.print("[bold]インストールされているツールを確認中...[/bold]\n")
 
-    tracker = StepTracker("Check Available Tools")
+    tracker = StepTracker("利用可能なツールの確認")
     
-    tracker.add("git", "Git version control")
+    tracker.add("git", "Gitバージョン管理")
     tracker.add("claude", "Claude Code CLI")
     tracker.add("gemini", "Gemini CLI")
     tracker.add("qwen", "Qwen Code CLI")
     tracker.add("code", "Visual Studio Code")
     tracker.add("code-insiders", "Visual Studio Code Insiders")
-    tracker.add("cursor-agent", "Cursor IDE agent")
+    tracker.add("cursor-agent", "Cursor IDEエージェント")
     tracker.add("windsurf", "Windsurf IDE")
     tracker.add("kilocode", "Kilo Code IDE")
     tracker.add("opencode", "opencode")
@@ -1117,12 +1117,12 @@ def check():
 
     console.print(tracker.render())
 
-    console.print("\n[bold green]Specify CLI is ready to use![/bold green]")
+    console.print("\n[bold green]Specify CLIは使用可能です！[/bold green]")
 
     if not git_ok:
-        console.print("[dim]Tip: Install git for repository management[/dim]")
+        console.print("[dim]ヒント: リポジトリ管理のためにgitをインストールしてください[/dim]")
     if not (claude_ok or gemini_ok or cursor_ok or qwen_ok or windsurf_ok or kilocode_ok or opencode_ok or codex_ok or auggie_ok):
-        console.print("[dim]Tip: Install an AI assistant for the best experience[/dim]")
+        console.print("[dim]ヒント: 最適な体験のためにAIアシスタントをインストールしてください[/dim]")
 
 
 def main():
